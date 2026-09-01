@@ -1,0 +1,221 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   دربند — Design System
+   Colors / Typography / Motion tokens
+   ========================================================================== */
+
+@theme {
+  /* --- Palette --------------------------------------------------------- */
+  --color-espresso-950: #170d08;
+  --color-espresso-900: #22150e;
+  --color-espresso-800: #2e1d13;
+  --color-espresso-700: #3d2718;
+
+  --color-coffee-600: #6b4423;
+  --color-coffee-500: #815433;
+  --color-coffee-400: #9c6b45;
+
+  --color-beige-300: #d9c5ad;
+  --color-beige-200: #e7d8c5;
+  --color-cream-100: #f3e9dc;
+  --color-cream-50: #f8f2ea;
+  --color-offwhite: #fbf8f4;
+
+  --color-charcoal: #1c1917;
+  --color-ash-600: #6f635a;
+  --color-ash-400: #a2948a;
+
+  --color-accent-600: #a8642c;
+  --color-accent-500: #c07f3e;
+  --color-accent-400: #d59b5c;
+
+  --color-success: #3f6b4f;
+  --color-danger: #9a3d33;
+
+  /* --- Typography ------------------------------------------------------ */
+  --font-sans: var(--font-vazir), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-vazir), ui-serif, Georgia, serif;
+  --font-latin: "Georgia", "Times New Roman", serif;
+
+  --text-display: 3.5rem;
+  --text-display--line-height: 1.15;
+  --text-display--letter-spacing: -0.02em;
+
+  /* --- Motion ---------------------------------------------------------- */
+  --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-fade-up: fade-up 0.7s var(--ease-brand) both;
+  --animate-fade-in: fade-in 0.5s var(--ease-brand) both;
+  --animate-drawer-in: drawer-in 0.35s var(--ease-brand) both;
+  --animate-scale-in: scale-in 0.3s var(--ease-brand) both;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-marquee: marquee 38s linear infinite;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes drawer-in {
+  from { opacity: 0; transform: translateX(-24px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(50%); }
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+@layer base {
+  * {
+    border-color: color-mix(in oklab, var(--color-beige-300) 55%, transparent);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-offwhite);
+    color: var(--color-espresso-900);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "ss02";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4 {
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Accessible, brand-consistent focus ring */
+  :focus-visible {
+    outline: 2px solid var(--color-accent-600);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--color-espresso-900);
+    color: var(--color-cream-100);
+  }
+}
+
+/* ==========================================================================
+   Utilities
+   ========================================================================== */
+
+@utility container-page {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+  max-width: 88rem;
+
+  @media (width >= 48rem) {
+    padding-inline: 2rem;
+  }
+  @media (width >= 80rem) {
+    padding-inline: 3rem;
+  }
+}
+
+/* Latin numerals / words inside an RTL page */
+@utility latin {
+  font-family: var(--font-latin);
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+@utility eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-accent-600);
+}
+
+@utility hide-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+@utility skeleton-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-beige-200) 0%,
+    var(--color-cream-50) 40%,
+    var(--color-beige-200) 80%
+  );
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
+}
+
+/* Scroll reveal — progressive enhancement, visible by default without JS */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.75s var(--ease-brand),
+    transform 0.75s var(--ease-brand);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal.is-visible,
+.no-js .reveal {
+  opacity: 1;
+  transform: none;
+}
+
+/* Safety net: never hide content from clients without scripting. */
+@media (scripting: none) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Grain overlay for premium editorial surfaces */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+}
