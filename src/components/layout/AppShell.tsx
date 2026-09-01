@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { ToastProvider } from "@/store/toast";
 import { StoreProvider } from "@/store/store";
+import { AuthProvider } from "@/features/auth/AuthProvider";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { MobileNav } from "@/components/layout/MobileNav";
@@ -18,14 +19,16 @@ import { cn } from "@/lib/utils";
 export function AppShell({ children }: { children: ReactNode }) {
   return (
     <ToastProvider>
-      <StoreProvider>
-        <Header />
-        <Main>{children}</Main>
-        <Footer />
-        <MobileNav />
-        <CartDrawer />
-        <SearchOverlay />
-      </StoreProvider>
+      <AuthProvider>
+        <StoreProvider>
+          <Header />
+          <Main>{children}</Main>
+          <Footer />
+          <MobileNav />
+          <CartDrawer />
+          <SearchOverlay />
+        </StoreProvider>
+      </AuthProvider>
     </ToastProvider>
   );
 }

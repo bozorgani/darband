@@ -6,12 +6,28 @@ import { useEffect, useState } from "react";
 import { Drawer } from "@/components/ui/Overlay";
 import { useStore } from "@/store/store";
 import { mainNav, socialLinks } from "@/data/site";
-import { ChevronDownIcon, HeartIcon, SearchIcon, socialIcons } from "@/components/ui/Icons";
+import {
+  BellIcon,
+  BoxIcon,
+  ChevronDownIcon,
+  HeartIcon,
+  LogoutIcon,
+  SearchIcon,
+  UserIcon,
+  socialIcons,
+} from "@/components/ui/Icons";
 import { cn } from "@/lib/utils";
 import { ButtonLink } from "@/components/ui/Button";
+import { useAuth } from "@/features/auth/AuthProvider";
+import { fullName, initials, maskPhone } from "@/features/auth/auth.utils";
+import { useToast } from "@/store/toast";
+import { useRouter } from "next/navigation";
 
 export function MobileNav() {
   const { navOpen, setNavOpen, setSearchOpen } = useStore();
+  const { user, isAuthenticated, hydrated, signOut } = useAuth();
+  const { toast } = useToast();
+  const router = useRouter();
   const pathname = usePathname();
   const [expanded, setExpanded] = useState<string | null>(null);
 
@@ -95,6 +111,76 @@ export function MobileNav() {
             </li>
           </ul>
         </nav>
+
+        {/* ------------------------------ Account ------------------------------ */}
+        {hydrated && isAuthenticated && user ? (
+          <section aria-label="حساب کاربری" className="mt-6 rounded-2xl bg-cream-50 p-4">
+            <div className="flex items-center gap-3">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-accent-600 text-sm font-black text-white">
+                {initials(user)}
+              </span>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-bold text-espresso-900">
+                  {fullName(user) || "کاربر دربند"}
+                </p>
+                <p className="latin mt-0.5 text-[0.7rem] text-ash-600">{maskPhone(user.phone)}</p>
+              </div>
+            </div>
+
+            <ul className="mt-3 border-t border-beige-300/60 pt-2">
+              {[
+                { href: "/account", label: "پیشخوان", icon: UserIcon },
+                { href: "/account/orders", label: "سفارش‌های من", icon: BoxIcon },
+                { href: "/account/notifications", label: "اعلان‌ها", icon: BellIcon },
+              ].map((entry) => {
+                const Icon = entry.icon;
+                return (
+                  <li key={entry.href}>
+                    <Link
+                      href={entry.href}
+                      className="flex items-center gap-2.5 py-2.5 text-sm font-semibold text-espresso-800"
+                    >
+                      <Icon className="size-[18px] text-ash-600" />
+                      {entry.label}
+                    </Link>
+                  </li>
+                );
+              })}
+              <li>
+                <button
+                  type="button"
+                  data-testid="mobile-nav-logout"
+                  onClick={() => {
+                    setNavOpen(false);
+                    signOut();
+                    toast({
+                      tone: "info",
+                      title: "از حساب خود خارج شدید",
+                      description: "سبد خرید شما محفوظ ماند.",
+                    });
+                    router.replace("/");
+                  }}
+                  className="flex w-full items-center gap-2.5 py-2.5 text-sm font-semibold text-danger"
+                >
+                  <LogoutIcon className="size-[18px]" />
+                  خروج از حساب
+                </button>
+              </li>
+            </ul>
+          </section>
+        ) : (
+          <Link
+            href="/auth"
+            data-testid="mobile-nav-auth"
+            className="mt-6 flex items-center justify-between rounded-2xl border border-espresso-900/15 px-4 py-3.5 text-sm font-bold text-espresso-900 transition hover:border-espresso-900/40"
+          >
+            <span className="flex items-center gap-2.5">
+              <UserIcon className="size-5" />
+              ورود یا ثبت‌نام
+            </span>
+            <span aria-hidden="true">←</span>
+          </Link>
+        )}
 
         <div className="mt-8 rounded-2xl bg-espresso-900 p-5 text-cream-50 grain relative overflow-hidden">
           <p className="text-sm font-bold">اشتراک ماهانه قهوه</p>

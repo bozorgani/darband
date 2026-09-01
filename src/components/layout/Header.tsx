@@ -10,6 +10,7 @@ import { useStore } from "@/store/store";
 import { BagIcon, HeartIcon, MenuIcon, SearchIcon } from "@/components/ui/Icons";
 import { toPersianDigits } from "@/lib/format";
 import { Logo } from "./Logo";
+import { AccountMenu } from "./AccountMenu";
 
 export function Header() {
   const pathname = usePathname();
@@ -139,6 +140,8 @@ export function Header() {
                   </span>
                 )}
               </Link>
+
+              <AccountMenu />
 
               <button
                 type="button"

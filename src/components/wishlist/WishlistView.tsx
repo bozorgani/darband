@@ -10,15 +10,19 @@ import { ProductGridSkeleton } from "@/components/ui/Primitives";
 import { toPersianDigits } from "@/lib/format";
 import { useToast } from "@/store/toast";
 
-export function WishlistView() {
+export function WishlistView({ embedded = false }: { embedded?: boolean } = {}) {
   const { wishlist, hydrated, addProduct, removeWishlist } = useStore();
   const { toast } = useToast();
 
   const saved = products.filter((p) => wishlist.includes(p.id));
 
+  /* `embedded` renders inside the account shell, which already provides
+     the page container, heading and spacing. */
+  const wrapper = embedded ? "" : "container-page py-12";
+
   if (!hydrated) {
     return (
-      <div className="container-page py-12">
+      <div className={wrapper}>
         <ProductGridSkeleton count={4} />
       </div>
     );
@@ -26,7 +30,7 @@ export function WishlistView() {
 
   if (saved.length === 0) {
     return (
-      <div className="container-page py-12">
+      <div className={wrapper}>
         <EmptyState
           icon={<HeartIcon className="size-7" />}
           title="فهرست علاقه‌مندی‌ها خالی است"
@@ -39,7 +43,7 @@ export function WishlistView() {
   }
 
   return (
-    <div className="container-page py-10 lg:py-12">
+    <div className={embedded ? "" : "container-page py-10 lg:py-12"}>
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <p className="text-sm text-ash-600">
           {toPersianDigits(saved.length)} محصول ذخیره شده است.

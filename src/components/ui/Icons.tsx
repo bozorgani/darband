@@ -250,6 +250,66 @@ export const YoutubeIcon = (p: IconProps) => (
   </Base>
 );
 
+/* ------------------------- Account & auth glyphs ------------------------- */
+
+export const UserIcon = (p: IconProps) => (
+  <Base {...p}>
+    <circle cx="12" cy="8" r="3.6" />
+    <path d="M4.8 20c.9-3.6 3.7-5.4 7.2-5.4s6.3 1.8 7.2 5.4" />
+  </Base>
+);
+
+export const LogoutIcon = (p: IconProps) => (
+  <Base {...p}>
+    <path d="M14 5.5V4.8A1.8 1.8 0 0 0 12.2 3H5.8A1.8 1.8 0 0 0 4 4.8v14.4A1.8 1.8 0 0 0 5.8 21h6.4a1.8 1.8 0 0 0 1.8-1.8v-.7" />
+    <path d="M20 12H9.5m10.5 0-3-3m3 3-3 3" />
+  </Base>
+);
+
+export const BellIcon = (p: IconProps) => (
+  <Base {...p}>
+    <path d="M18 9a6 6 0 1 0-12 0c0 4.2-1.4 5.6-1.4 5.6h14.8S18 13.2 18 9Z" />
+    <path d="M10.3 18.3a2 2 0 0 0 3.4 0" />
+  </Base>
+);
+
+export const BoxIcon = (p: IconProps) => (
+  <Base {...p}>
+    <path d="m12 3 8 4.2v9.6L12 21l-8-4.2V7.2L12 3Z" />
+    <path d="M4.3 7.4 12 11.5l7.7-4.1M12 11.5V21" />
+  </Base>
+);
+
+export const GridIcon = (p: IconProps) => (
+  <Base {...p}>
+    <rect x="3.5" y="3.5" width="7" height="7" rx="2" />
+    <rect x="13.5" y="3.5" width="7" height="7" rx="2" />
+    <rect x="3.5" y="13.5" width="7" height="7" rx="2" />
+    <rect x="13.5" y="13.5" width="7" height="7" rx="2" />
+  </Base>
+);
+
+export const EditIcon = (p: IconProps) => (
+  <Base {...p}>
+    <path d="M4 20h4l10-10a2.4 2.4 0 0 0-3.4-3.4L4.6 16.6 4 20Z" />
+    <path d="m13.8 7.2 3 3" />
+  </Base>
+);
+
+export const DownloadIcon = (p: IconProps) => (
+  <Base {...p}>
+    <path d="M12 4v10m0 0 3.5-3.5M12 14l-3.5-3.5" />
+    <path d="M5 17v1.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V17" />
+  </Base>
+);
+
+export const LockIcon = (p: IconProps) => (
+  <Base {...p}>
+    <rect x="4.5" y="10" width="15" height="10" rx="3" />
+    <path d="M8.2 10V7.6a3.8 3.8 0 0 1 7.6 0V10" />
+  </Base>
+);
+
 export const socialIcons = {
   instagram: InstagramIcon,
   telegram: TelegramIcon,
