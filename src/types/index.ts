@@ -1,5 +1,5 @@
 /**
- * Domain types for the Darband storefront.
+ * Domain types for the Ghahvino storefront.
  *
  * NOTE: This shape mirrors what a real commerce backend would return.
  * The UI reads exclusively through `src/data/*` so a real API can be

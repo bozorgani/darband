@@ -59,7 +59,7 @@ function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
 
 /** TODO(backend): discount validation + shipping rates come from the API. */
 export const MOCK_DISCOUNTS: DiscountCode[] = [
-  { code: "DARBAND10", percentage: 0.1, label: "۱۰٪ تخفیف خوش‌آمدگویی" },
+  { code: "GHAHVINO10", percentage: 0.1, label: "۱۰٪ تخفیف خوش‌آمدگویی" },
   { code: "FILTER20", percentage: 0.2, label: "۲۰٪ تخفیف قهوه‌های فیلتر" },
 ];
 
@@ -110,6 +110,10 @@ interface StoreContextValue {
 
 const StoreContext = createContext<StoreContextValue | null>(null);
 
+/* Legacy `darband.*` storage keys are kept intentionally after the Ghahvino
+   rebrand: they are internal, never exposed to users or crawlers, and renaming
+   them would drop existing carts / wishlists / sessions of returning visitors.
+   See RESPONSIVE_SEO_AUDIT.md § «کلیدهای ذخیره‌سازی». */
 const CART_KEY = "darband.cart.v1";
 
 export function StoreProvider({ children }: { children: ReactNode }) {

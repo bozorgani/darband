@@ -2,14 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeader } from "@/components/ui/Feedback";
-import { InstagramIcon } from "@/components/ui/Icons";
 import { articles } from "@/data/articles";
 import { formatReadingTime } from "@/lib/format";
 
 const gallery = [
   { src: "/images/lifestyle/1.jpg", alt: "دم‌آوری پور اور در صبح", tall: true },
   { src: "/images/products/ethiopia-2.jpg", alt: "دانه‌های تازه رست‌شده اتیوپی" },
-  { src: "/images/lifestyle/3.jpg", alt: "فضای رست‌خانه دربند" },
+  { src: "/images/lifestyle/3.jpg", alt: "فضای رست‌خانه قهوینو" },
   { src: "/images/lifestyle/2.jpg", alt: "فنجان اسپرسو روی میز چوبی" },
   { src: "/images/roastery.jpg", alt: "رستر در حال کار", tall: true },
   { src: "/images/lifestyle/4.jpg", alt: "لحظه‌ای از یک صبح قهوه" },
@@ -20,20 +19,9 @@ export function LifestyleGallery() {
     <section className="py-20 lg:py-24" aria-labelledby="gallery-title">
       <div className="container-page">
         <SectionHeader
-          eyebrow="لحظه‌های دربند"
-          title="از فنجان‌های شما"
-          description="ما را با هشتگ ‎#دربند دنبال کنید و عکس فنجانتان را با ما به اشتراک بگذارید."
-          action={
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-espresso-900/15 px-4 py-2.5 text-sm font-semibold text-espresso-900 transition hover:border-espresso-900 hover:bg-espresso-900 hover:text-cream-50"
-            >
-              <InstagramIcon className="size-4" />
-              <span className="latin">darband.coffee@</span>
-            </a>
-          }
+          eyebrow="لحظه‌های قهوینو"
+          title="از رست تا فنجان"
+          description="نگاهی به رست‌خانه، دم‌آوری و فنجان‌هایی که هر روز کنار ما ساخته می‌شوند."
         />
       </div>
 
@@ -45,12 +33,9 @@ export function LifestyleGallery() {
               delay={i * 60}
               className={item.tall ? "row-span-2" : undefined}
             >
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative block h-full overflow-hidden rounded-2xl bg-cream-100"
-              >
+              {/* TODO(brand): تا زمانی که حساب رسمی شبکه اجتماعی تأیید نشده،
+                  این کاشی‌ها لینک بیرونی ندارند. */}
+              <figure className="group relative block h-full overflow-hidden rounded-2xl bg-cream-100">
                 <div className={`relative ${item.tall ? "aspect-1/2 max-lg:aspect-square" : "aspect-square"}`}>
                   <Image
                     src={item.src}
@@ -61,10 +46,7 @@ export function LifestyleGallery() {
                     className="object-cover transition-transform duration-[800ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-110"
                   />
                 </div>
-                <span className="absolute inset-0 flex items-center justify-center bg-espresso-950/0 text-cream-50 opacity-0 transition-all duration-400 group-hover:bg-espresso-950/45 group-hover:opacity-100">
-                  <InstagramIcon className="size-6" />
-                </span>
-              </a>
+              </figure>
             </Reveal>
           ))}
         </div>

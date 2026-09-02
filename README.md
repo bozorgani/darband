@@ -1,14 +1,24 @@
-# دربند — DARBAND Roasters
+# قهوینو — Ghahvino
 
 فروشگاه آنلاین قهوهٔ تخصصی، تمام‌فارسی و RTL. **Frontend-only**: تمام داده‌ها ماک و ایزوله در `src/data/` هستند.
+
+دامنه کانونی: `https://ghahvino.ir`
 
 ## اجرا
 
 ```bash
 npm install
+cp .env.example .env.local   # فقط NEXT_PUBLIC_SITE_URL
 npm run dev      # http://localhost:3000
 npm run build && npx next start
 ```
+
+## پیکربندی
+
+هویت برند، دامنه کانونی و زبان تنها در `src/config/site.ts` تعریف شده‌اند و متادیتا،
+canonical، `sitemap.xml`، `robots.txt`، Open Graph و JSON-LD از همان‌جا تغذیه می‌شوند.
+با `NEXT_PUBLIC_SITE_URL` می‌توان دامنه را برای محیط‌های staging عوض کرد؛ مقدار نامعتبر یا
+`localhost` در پروداکشن نادیده گرفته می‌شود و `https://ghahvino.ir` جای‌گزین می‌گردد.
 
 ## حساب کاربری و ورود (نمایشی)
 
@@ -37,12 +47,15 @@ npm run build && npx next start
 ```bash
 npx tsc --noEmit     # type-check
 npx eslint src       # lint (Next 16 دیگر next lint ندارد)
-node qa/flows.cjs    # ۲۹ سناریوی تعاملی فروشگاه (سرور باید بالا باشد)
-node qa/auth.cjs     # ۴۲ سناریوی ورود/OTP/پنل کاربری
-node qa/overflow.cjs # سرریز افقی + خطای کنسول در ۶ بریک‌پوینت
-node qa/shots.cjs    # اسکرین‌شات تمام‌صفحه از ۸ صفحه × ۲ ویوپورت
+node qa/flows.cjs      # ۲۹ سناریوی تعاملی فروشگاه (سرور باید بالا باشد)
+node qa/auth.cjs       # ۵۱ سناریوی ورود/OTP/پنل کاربری
+node qa/seo.cjs        # ۲۷ بررسی سئو روی HTML پروداکشن (متادیتا، sitemap، JSON-LD، لینک‌ها)
+node qa/responsive.cjs # ۷ صفحه × ۹ عرض: سرریز، لوگو، منوی موبایل، خطای کنسول
+node qa/overflow.cjs   # سرریز افقی + خطای کنسول در ۶ بریک‌پوینت
+node qa/shots.cjs      # اسکرین‌شات تمام‌صفحه از ۸ صفحه × ۲ ویوپورت
 ```
 
 استک: Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · Vazirmatn (self-hosted).
 
-گزارش کامل پروژه: [`REPORT.md`](./REPORT.md)
+گزارش کامل پروژه: [`REPORT.md`](./REPORT.md) · گزارش ورود: [`REPORT-AUTH.md`](./REPORT-AUTH.md) ·
+ممیزی ری‌برند/سئو/ریسپانسیو: [`RESPONSIVE_SEO_AUDIT.md`](./RESPONSIVE_SEO_AUDIT.md)

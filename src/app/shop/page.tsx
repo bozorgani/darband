@@ -1,3 +1,4 @@
+import { absoluteUrl, sharedOpenGraph } from "@/config/site";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ShopView } from "@/components/products/ShopView";
@@ -7,12 +8,15 @@ import { products } from "@/data/products";
 import { sortProducts } from "@/lib/filtering";
 
 export const metadata: Metadata = {
-  title: "فروشگاه قهوه تخصصی",
+  title: "فروشگاه قهوه تخصصی و تازه‌رست",
   description:
-    "خرید قهوه دانه، قهوه آسیاب‌شده، اسپرسو، کپسول و تجهیزات دم‌آوری. فیلتر بر اساس خاستگاه، درجه رست، روش دم‌آوری و قیمت.",
+    "خرید قهوه تخصصی، قهوه دانه و قهوه آسیاب‌شده تازه‌رست با قیمت مشخص؛ فیلتر بر اساس خاستگاه، درجه رست، روش دم‌آوری و محدوده قیمت.",
   alternates: { canonical: "/shop" },
   openGraph: {
-    title: "فروشگاه قهوه تخصصی دربند",
+    ...sharedOpenGraph,
+    type: "website",
+    url: absoluteUrl("/shop"),
+    title: "فروشگاه قهوه تخصصی قهوینو",
     description: "کاتالوگ کامل قهوه‌های تک‌خاستگاه، ترکیب‌ها و تجهیزات دم‌آوری.",
   },
 };
@@ -24,7 +28,7 @@ export default function ShopPage() {
         <div className="container-page py-10 lg:py-14">
           <Breadcrumb items={[{ label: "خانه", href: "/" }, { label: "فروشگاه" }]} />
           <h1 className="mt-4 text-3xl font-black text-espresso-900 sm:text-4xl">
-            فروشگاه دربند
+            فروشگاه قهوه تخصصی قهوینو
           </h1>
           <p className="mt-3 max-w-2xl text-sm/7 text-ash-600">
             هر لات پیش از انتشار در جلسه کاپینگ هفتگی امتیاز می‌گیرد. فیلترها را بر اساس ذائقه و
@@ -36,6 +40,10 @@ export default function ShopPage() {
       {/* The interactive shop reads `useSearchParams`, so it is client-only.
           The fallback server-renders the default catalogue so crawlers and
           no-JS visitors still get a full product list. */}
+      {/* Names the product list for screen readers and keeps the heading order
+          h1 → h2 → h3 (product titles). */}
+      <h2 className="sr-only">فهرست محصولات فروشگاه قهوینو</h2>
+
       <Suspense
         fallback={
           <div className="container-page pb-20 pt-8 lg:pt-10">

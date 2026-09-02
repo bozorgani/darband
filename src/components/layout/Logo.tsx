@@ -17,9 +17,12 @@ export function Logo({ className }: { className?: string }) {
         <path d="M15 26c3.2-3 4.6-8.6 3.6-13.4" strokeLinecap="round" />
       </svg>
       <span className="flex h-full flex-col justify-center leading-none">
-        <span className="text-[1.35em] font-black tracking-tight">دربند</span>
-        <span className="latin mt-0.5 text-[0.5em] font-semibold tracking-[0.38em] opacity-60">
-          DARBAND
+        <span className="text-[1.3em] font-black tracking-tight">قهوینو</span>
+        <span
+          aria-hidden="true"
+          className="latin mt-0.5 text-[0.46em] font-semibold tracking-[0.3em] opacity-60"
+        >
+          GHAHVINO
         </span>
       </span>
     </span>

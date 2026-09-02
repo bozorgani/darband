@@ -77,7 +77,7 @@ const check = (name, ok, extra = "") =>
   check("Drawer → Cart page", page.url().includes("/cart"));
 
   // Discount code
-  await page.getByLabel("کد تخفیف").fill("DARBAND10");
+  await page.getByLabel("کد تخفیف").fill("GHAHVINO10");
   await page.getByRole("button", { name: "اعمال" }).click();
   await page.waitForTimeout(500);
   check("Valid discount applies", (await page.getByText("کد تخفیف اعمال شد").count()) > 0);

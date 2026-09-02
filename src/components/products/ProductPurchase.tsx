@@ -209,7 +209,7 @@ export function ProductPurchase({ product }: { product: Product }) {
         {[
           { icon: <TruckIcon className="size-4" />, text: "ارسال رایگان بالای ۱٫۵ میلیون" },
           { icon: <RefreshIcon className="size-4" />, text: "۷ روز ضمانت بازگشت" },
-          { icon: <ShieldIcon className="size-4" />, text: "تازگی تضمین‌شده" },
+          { icon: <ShieldIcon className="size-4" />, text: "درج تاریخ رست" },
         ].map((item) => (
           <li key={item.text} className="flex items-center gap-2 text-[0.72rem] text-ash-600">
             <span className="text-accent-600">{item.icon}</span>

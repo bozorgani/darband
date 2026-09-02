@@ -40,7 +40,7 @@ export function MobileNav() {
       open={navOpen}
       onClose={() => setNavOpen(false)}
       title="منو"
-      description="فروشگاه قهوه‌های تخصصی دربند"
+      description="فروشگاه قهوه‌های تخصصی قهوینو"
     >
       <div className="p-5">
         <button
@@ -121,7 +121,7 @@ export function MobileNav() {
               </span>
               <div className="min-w-0">
                 <p className="truncate text-sm font-bold text-espresso-900">
-                  {fullName(user) || "کاربر دربند"}
+                  {fullName(user) || "کاربر قهوینو"}
                 </p>
                 <p className="latin mt-0.5 text-[0.7rem] text-ash-600">{maskPhone(user.phone)}</p>
               </div>

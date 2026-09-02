@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ==========================================================================
-   دربند — Design System
+   قهوینو — Design System
    Colors / Typography / Motion tokens
    ========================================================================== */
 
@@ -27,6 +27,8 @@
   --color-ash-400: #a2948a;
 
   --color-accent-600: #a8642c;
+  /* WCAG AA for 12px uppercase text on cream backgrounds (accent-600 is 4.38:1). */
+  --color-accent-700: #8a5122;
   --color-accent-500: #c07f3e;
   --color-accent-400: #d59b5c;
 
@@ -155,7 +157,7 @@
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--color-accent-600);
+  color: var(--color-accent-700);
 }
 
 @utility hide-scrollbar {

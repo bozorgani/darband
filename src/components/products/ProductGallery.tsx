@@ -128,11 +128,16 @@ export function ProductGallery({
                 type="button"
                 onClick={() => setActive(i)}
                 aria-label={`نمایش تصویر ${toPersianDigits(i + 1)}`}
-                className={cn(
-                  "h-1.5 rounded-full transition-all",
-                  i === active ? "w-6 bg-espresso-900" : "w-1.5 bg-beige-300",
-                )}
-              />
+                className="flex h-6 min-w-6 items-center justify-center px-1"
+              >
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "block h-1.5 rounded-full transition-all",
+                    i === active ? "w-6 bg-espresso-900" : "w-1.5 bg-beige-300",
+                  )}
+                />
+              </button>
             ))}
           </div>
         </div>

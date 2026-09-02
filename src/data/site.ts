@@ -1,20 +1,37 @@
+import { siteConfig } from "@/config/site";
 import type { BrewMethod, RoastLevel } from "@/types";
 
 /** Brand + navigation content. Static content layer. */
 
+/**
+ * Brand facts.
+ *
+ * ⚠️ Contact details, social accounts and legal identifiers of the previous
+ * brand were intentionally REMOVED rather than carried over — inventing them
+ * for Ghahvino would publish false business data (and false structured data).
+ * TODO(brand): fill these in with the owner's confirmed information; every
+ * consumer already renders them conditionally, so a value simply appears once
+ * it is set.
+ */
 export const brand = {
-  name: "دربند",
-  latinName: "DARBAND",
-  tagline: "رستری قهوه‌های تخصصی",
+  name: siteConfig.name,
+  latinName: siteConfig.latinName,
+  tagline: "قهوه تخصصی تازه‌رست",
   claim: "هر فنجان، روایت یک دانه",
   description:
-    "دربند یک رستری مستقل قهوه‌های تخصصی است؛ ما دانه‌ها را مستقیم از مزارع منتخب تهیه می‌کنیم، در تهران رست می‌کنیم و در کمترین زمان ممکن به دست شما می‌رسانیم.",
-  email: "hello@darband.coffee",
-  phone: "۰۲۱ ۸۸۸۸ ۱۲۳۴",
-  address: "تهران، خیابان ولیعصر، کوچه شهید مرادی، پلاک ۱۲",
-  hours: "شنبه تا پنجشنبه، ۹ تا ۱۹",
-  founded: "۱۳۹۶",
+    "قهوینو فروشگاه اینترنتی قهوه تخصصی است؛ قهوه دانه و آسیاب‌شده تازه‌رست به‌همراه تجهیزات دم‌آوری را بر اساس خاستگاه، درجه رست و پروفایل طعمی انتخاب کنید.",
+  /** Unconfirmed contact channels stay `null` until the owner provides them. */
+  email: null as string | null,
+  phone: null as string | null,
+  phoneHref: null as string | null,
+  address: null as string | null,
+  hours: null as string | null,
 } as const;
+
+/** `true` when at least one confirmed contact channel exists. */
+export const hasContactInfo = Boolean(
+  brand.email || brand.phone || brand.address || brand.hours,
+);
 
 export interface NavItem {
   label: string;
@@ -28,7 +45,7 @@ export const mainNav: NavItem[] = [
     label: "فروشگاه",
     href: "/shop",
     children: [
-      { label: "همه محصولات", href: "/shop", description: "کل کاتالوگ دربند" },
+      { label: "همه محصولات", href: "/shop", description: "کل کاتالوگ قهوینو" },
       { label: "قهوه دانه", href: "/shop?category=whole-bean", description: "تازه رست‌شده" },
       { label: "قهوه آسیاب‌شده", href: "/shop?category=ground", description: "آماده دم‌آوری" },
       { label: "کپسول قهوه", href: "/shop?category=capsule", description: "سازگار با نسپرسو" },
@@ -41,7 +58,7 @@ export const mainNav: NavItem[] = [
     children: [
       { label: "قهوه تخصصی", href: "/shop?category=specialty", description: "امتیاز بالای ۸۵" },
       { label: "اسپرسو", href: "/shop?category=espresso", description: "کرمای پایدار" },
-      { label: "ترکیبی", href: "/shop?category=blend", description: "امضای دربند" },
+      { label: "ترکیبی", href: "/shop?category=blend", description: "امضای قهوینو" },
       { label: "بدون کافئین", href: "/shop?q=بدون کافئین", description: "فرآوری با آب" },
     ],
   },
@@ -83,7 +100,7 @@ export const footerNav: { title: string; links: { label: string; href: string }[
     ],
   },
   {
-    title: "دربند",
+    title: "قهوینو",
     links: [
       { label: "درباره ما", href: "/about" },
       { label: "ژورنال قهوه", href: "/journal" },
@@ -100,12 +117,18 @@ export const legalLinks = [
   { label: "شرایط بازگشت", href: "/returns" },
 ];
 
-export const socialLinks = [
-  { label: "اینستاگرام", href: "https://instagram.com", icon: "instagram" as const },
-  { label: "تلگرام", href: "https://telegram.org", icon: "telegram" as const },
-  { label: "لینکدین", href: "https://linkedin.com", icon: "linkedin" as const },
-  { label: "یوتیوب", href: "https://youtube.com", icon: "youtube" as const },
-];
+/**
+ * Official Ghahvino social accounts.
+ * Empty on purpose: the previous entries pointed at the platforms' home pages,
+ * which must not be presented as this brand's accounts.
+ * TODO(brand): add the real profile URLs; the footer renders this list only
+ * when it is non-empty.
+ */
+export const socialLinks: {
+  label: string;
+  href: string;
+  icon: "instagram" | "telegram" | "linkedin" | "youtube";
+}[] = [];
 
 /* ------------------------------ Coffee Finder ---------------------------- */
 
@@ -267,7 +290,7 @@ export const brandValues = [
   {
     title: "رست در روز سفارش",
     description:
-      "هیچ بسته‌ای بیش از ۴۸ ساعت در انبار نمی‌ماند؛ تاریخ رست روی هر بسته چاپ می‌شود.",
+      "تاریخ رست روی هر بسته چاپ می‌شود تا بدانید دقیقاً چه چیزی را دم می‌کنید.",
   },
   {
     title: "شفافیت کامل",
@@ -282,8 +305,8 @@ export const brandValues = [
 ];
 
 export const aboutTimeline = [
-  { year: "۱۳۹۶", title: "یک رستر ۵ کیلویی", text: "کار را در زیرزمینی در دربند با یک رستر کوچک و سه مشتری شروع کردیم." },
+  { year: "۱۳۹۶", title: "یک رستر ۵ کیلویی", text: "کار را در زیرزمینی در قهوینو با یک رستر کوچک و سه مشتری شروع کردیم." },
   { year: "۱۳۹۸", title: "اولین سفر خاستگاه", text: "به اتیوپی رفتیم و اولین قرارداد مستقیم‌مان را با ایستگاه شست‌وشوی کوچره بستیم." },
   { year: "۱۴۰۱", title: "رست‌خانه جدید", text: "به رست‌خانه‌ای ۴۰۰ متری با رستر ۱۵ کیلویی و آزمایشگاه کاپینگ نقل‌مکان کردیم." },
-  { year: "۱۴۰۴", title: "۴۰ کافه، ۹۰۰۰ خانه", text: "امروز قهوه دربند در بیش از ۴۰ کافه سرو می‌شود و هر ماه به هزاران خانه می‌رسد." },
+  { year: "۱۴۰۴", title: "۴۰ کافه، ۹۰۰۰ خانه", text: "امروز قهوه قهوینو در بیش از ۴۰ کافه سرو می‌شود و هر ماه به هزاران خانه می‌رسد." },
 ];

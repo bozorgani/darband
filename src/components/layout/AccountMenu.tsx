@@ -90,7 +90,7 @@ export function AccountMenu() {
           className="absolute end-0 top-full z-50 mt-2 w-60 overflow-hidden rounded-2xl border border-beige-300/70 bg-offwhite p-2 text-espresso-900 shadow-[0_24px_60px_-24px_rgba(34,21,14,0.45)] animate-scale-in"
         >
           <div className="border-b border-beige-300/60 px-3 pb-3 pt-2">
-            <p className="truncate text-sm font-bold">{fullName(user) || "کاربر دربند"}</p>
+            <p className="truncate text-sm font-bold">{fullName(user) || "کاربر قهوینو"}</p>
             <p className="latin mt-0.5 text-[0.7rem] text-ash-600">{maskPhone(user.phone)}</p>
           </div>
 

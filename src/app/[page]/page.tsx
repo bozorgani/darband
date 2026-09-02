@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getInfoPage, infoPages } from "@/data/pages";
 import { Accordion, Breadcrumb } from "@/components/ui/Disclosure";
-import { brand } from "@/data/site";
+import { brand, hasContactInfo } from "@/data/site";
+import { absoluteUrl } from "@/config/site";
 import { MailIcon, PhoneIcon, PinIcon, ClockIcon } from "@/components/ui/Icons";
 import { ButtonLink } from "@/components/ui/Button";
 
@@ -30,8 +31,21 @@ export default async function InfoRoute({ params }: { params: Params }) {
   const info = getInfoPage(page);
   if (!info) notFound();
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "خانه", item: absoluteUrl("/") },
+      { "@type": "ListItem", position: 2, name: info.title, item: absoluteUrl(`/${info.slug}`) },
+    ],
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       <div className="border-b border-beige-300/60 bg-cream-50">
         <div className="container-page py-10 lg:py-14">
           <Breadcrumb items={[{ label: "خانه", href: "/" }, { label: info.title }]} />
@@ -96,29 +110,44 @@ export default async function InfoRoute({ params }: { params: Params }) {
 
         <aside className="lg:sticky lg:top-28 lg:self-start">
           <div className="rounded-3xl bg-cream-100/70 p-6">
-            <h2 className="text-base font-bold text-espresso-900">ارتباط با دربند</h2>
-            <ul className="mt-4 space-y-3 text-sm text-ash-600">
-              <li className="flex items-start gap-2.5">
-                <PinIcon className="mt-0.5 size-4 shrink-0 text-accent-600" />
-                {brand.address}
-              </li>
-              <li className="flex items-center gap-2.5">
-                <PhoneIcon className="size-4 shrink-0 text-accent-600" />
-                <a href="tel:+982188881234" className="hover:text-espresso-900">
-                  {brand.phone}
-                </a>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <MailIcon className="size-4 shrink-0 text-accent-600" />
-                <a href={`mailto:${brand.email}`} className="latin hover:text-espresso-900">
-                  {brand.email}
-                </a>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <ClockIcon className="size-4 shrink-0 text-accent-600" />
-                {brand.hours}
-              </li>
-            </ul>
+            <h2 className="text-base font-bold text-espresso-900">ارتباط با قهوینو</h2>
+            {hasContactInfo ? (
+              <ul className="mt-4 space-y-3 text-sm text-ash-600">
+                {info.slug && brand.address && (
+                  <li className="flex items-start gap-2.5">
+                    <PinIcon className="mt-0.5 size-4 shrink-0 text-accent-600" />
+                    {brand.address}
+                  </li>
+                )}
+                {brand.phone && brand.phoneHref && (
+                  <li className="flex items-center gap-2.5">
+                    <PhoneIcon className="size-4 shrink-0 text-accent-600" />
+                    <a href={`tel:${brand.phoneHref}`} className="hover:text-espresso-900">
+                      {brand.phone}
+                    </a>
+                  </li>
+                )}
+                {brand.email && (
+                  <li className="flex items-center gap-2.5">
+                    <MailIcon className="size-4 shrink-0 text-accent-600" />
+                    <a href={`mailto:${brand.email}`} className="latin hover:text-espresso-900">
+                      {brand.email}
+                    </a>
+                  </li>
+                )}
+                {brand.hours && (
+                  <li className="flex items-center gap-2.5">
+                    <ClockIcon className="size-4 shrink-0 text-accent-600" />
+                    {brand.hours}
+                  </li>
+                )}
+              </ul>
+            ) : (
+              <p className="mt-4 text-sm/7 text-ash-600">
+                راه‌های ارتباطی رسمی قهوینو به‌زودی اعلام می‌شود. تا آن زمان می‌توانید سفارش خود
+                را از فروشگاه ثبت کنید.
+              </p>
+            )}
             <ButtonLink href="/shop" fullWidth className="mt-6">
               رفتن به فروشگاه
             </ButtonLink>

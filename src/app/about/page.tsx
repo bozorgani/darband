@@ -1,3 +1,4 @@
+import { absoluteUrl, sharedOpenGraph } from "@/config/site";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { brand, brandValues, aboutTimeline } from "@/data/site";
@@ -8,12 +9,15 @@ import { ButtonLink } from "@/components/ui/Button";
 import { toPersianDigits } from "@/lib/format";
 
 export const metadata: Metadata = {
-  title: "درباره دربند",
+  title: "داستان قهوینو",
   description:
-    "داستان رستری دربند: تهیه مستقیم دانه از مزارع، رست در تهران و شفافیت کامل درباره هر لات قهوه.",
+    "داستان رستری قهوینو: تهیه مستقیم دانه از مزارع، رست در تهران و شفافیت کامل درباره هر لات قهوه.",
   alternates: { canonical: "/about" },
   openGraph: {
-    title: "درباره دربند | رستری قهوه‌های تخصصی",
+    ...sharedOpenGraph,
+    type: "website",
+    url: absoluteUrl("/about"),
+    title: "درباره قهوینو | رستری قهوه‌های تخصصی",
     description: "از یک رستر ۵ کیلویی در زیرزمین تا تأمین قهوه بیش از ۴۰ کافه.",
     images: ["/images/roastery.jpg"],
   },
@@ -26,7 +30,7 @@ export default function AboutPage() {
       <section className="relative isolate overflow-hidden bg-espresso-950 text-cream-50 grain">
         <Image
           src="/images/roastery.jpg"
-          alt="رست‌خانه دربند در حال کار"
+          alt="رست‌خانه قهوینو در حال کار"
           fill
           priority
           sizes="100vw"
@@ -40,19 +44,18 @@ export default function AboutPage() {
           />
           <p className="eyebrow mt-6 text-accent-400">داستان ما</p>
           <h1 className="mt-4 max-w-3xl text-4xl font-black leading-[1.15] sm:text-5xl lg:text-6xl">
-            ما قهوه را از انتها به ابتدا می‌شناسیم
+            داستان قهوینو، از دانه تا فنجان
           </h1>
           <p className="mt-5 max-w-2xl text-sm/8 text-cream-100/70 sm:text-base/9">
-            {brand.name} از سال {brand.founded} با یک باور ساده شروع شد: قهوه خوب پنهان‌کاری
-            نمی‌خواهد. اگر بدانید دانه از کجا آمده، چه کسی آن را چیده و چطور رست شده است، طعمش هم
-            متفاوت می‌شود.
+            {brand.name} با یک باور ساده شکل گرفت: قهوه خوب پنهان‌کاری نمی‌خواهد. اگر بدانید دانه
+            از کجا آمده، چه کسی آن را چیده و چطور رست شده است، طعمش هم متفاوت می‌شود.
           </p>
-          <dl className="mt-12 grid max-w-2xl grid-cols-2 gap-8 border-t border-cream-100/15 pt-8 sm:grid-cols-4">
+          <div className="mt-12 grid max-w-2xl grid-cols-2 gap-8 border-t border-cream-100/15 pt-8 sm:grid-cols-4">
             <StatBlock value={`+${toPersianDigits(40)}`} label="کافه همکار" tone="light" />
             <StatBlock value={`${toPersianDigits(9)}`} label="خاستگاه فعال" tone="light" />
             <StatBlock value={`+${toPersianDigits(9000)}`} label="مشتری خانگی" tone="light" />
             <StatBlock value={`${toPersianDigits(8)} سال`} label="سابقه رست" tone="light" />
-          </dl>
+          </div>
         </div>
       </section>
 
@@ -130,7 +133,7 @@ export default function AboutPage() {
               },
               {
                 title: "بسته‌بندی و ارسال",
-                text: "بسته‌بندی با دریچه یک‌طرفه، درج تاریخ رست و ارسال کمتر از ۴۸ ساعت پس از رست.",
+                text: "بسته‌بندی با دریچه یک‌طرفه و درج تاریخ رست روی هر بسته.",
               },
             ].map((step, i) => (
               <li key={step.title}>

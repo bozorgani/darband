@@ -55,7 +55,7 @@ export function AuthShell({
               <Link href="/privacy" className="font-semibold text-espresso-900 underline underline-offset-4">
                 حریم خصوصی
               </Link>{" "}
-              دربند را می‌پذیرید.
+              قهوینو را می‌پذیرید.
             </span>
           </p>
 

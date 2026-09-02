@@ -31,7 +31,7 @@ const prefLabels: { key: keyof NotificationPrefs; title: string; description: st
   },
   {
     key: "newsletter",
-    title: "خبرنامه دربند",
+    title: "خبرنامه قهوینو",
     description: "ماهی یک ایمیل درباره قهوه، رست و دم‌آوری.",
   },
 ];

@@ -17,7 +17,7 @@ export function CategoryShowcase() {
       <SectionHeader
         eyebrow="دسته‌بندی‌ها"
         title="از کجا شروع کنیم؟"
-        description="کاتالوگ دربند بر اساس روش دم‌آوری و سبک زندگی شما دسته‌بندی شده است."
+        description="کاتالوگ قهوینو بر اساس روش دم‌آوری و سبک زندگی شما دسته‌بندی شده است."
         action={
           <Link
             href="/shop"

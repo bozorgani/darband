@@ -61,7 +61,7 @@ export function CartView() {
         <EmptyState
           icon={<BagIcon className="size-7" />}
           title="سبد خرید شما خالی است"
-          description="هنوز چیزی انتخاب نکرده‌اید. از میان قهوه‌های تک‌خاستگاه و تجهیزات دم‌آوری دربند شروع کنید."
+          description="هنوز چیزی انتخاب نکرده‌اید. از میان قهوه‌های تک‌خاستگاه و تجهیزات دم‌آوری قهوینو شروع کنید."
           actionLabel="رفتن به فروشگاه"
           actionHref="/shop"
         />
@@ -137,7 +137,7 @@ export function CartView() {
                   id="discount"
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
-                  placeholder="مثلاً DARBAND10"
+                  placeholder="مثلاً GHAHVINO10"
                   dir="ltr"
                   className="h-11 flex-1 rounded-full border border-espresso-900/15 bg-white/80 px-4 text-sm text-espresso-900 placeholder:text-ash-400 focus:border-accent-600 focus:outline-none"
                 />
@@ -146,7 +146,7 @@ export function CartView() {
                 </Button>
               </div>
               <p className="mt-1.5 text-[0.68rem] text-ash-600">
-                کدهای فعال آزمایشی: <span className="latin">DARBAND10</span> و{" "}
+                کدهای فعال آزمایشی: <span className="latin">GHAHVINO10</span> و{" "}
                 <span className="latin">FILTER20</span>
               </p>
             </form>

@@ -145,7 +145,7 @@ export function BestSellers() {
       <SectionHeader
         eyebrow="پرفروش‌ترین‌ها"
         title="انتخاب هزاران فنجان"
-        description="محبوب‌ترین محصولات دربند در سه ماه گذشته، بر اساس سفارش‌های واقعی مشتریان."
+        description="محبوب‌ترین محصولات قهوینو در سه ماه گذشته، بر اساس سفارش‌های واقعی مشتریان."
       />
 
       <div className="mt-10 grid gap-6 lg:grid-cols-[1.15fr_1fr] lg:gap-8">
@@ -162,7 +162,7 @@ export function BestSellers() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-espresso-950/92 via-espresso-950/35 to-transparent" aria-hidden="true" />
             <div className="relative z-10 p-7 text-cream-50">
-              <Badge tone="accent">شماره یک فروش</Badge>
+              <Badge tone="accent">پرفروش</Badge>
               <h3 className="mt-3 text-2xl font-bold sm:text-3xl">
                 <Link href={`/product/${hero.slug}`} className="after:absolute after:inset-0">
                   {hero.title}

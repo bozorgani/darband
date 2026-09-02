@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { mainNav, brand } from "@/data/site";
+import { mainNav } from "@/data/site";
 import { useScrollState } from "@/hooks";
 import { useStore } from "@/store/store";
 import { BagIcon, HeartIcon, MenuIcon, SearchIcon } from "@/components/ui/Icons";
@@ -111,8 +111,10 @@ export function Header() {
             {/* Logo */}
             <Link
               href="/"
-              aria-label={`${brand.name} — صفحه اصلی`}
-              className="absolute start-1/2 -translate-x-1/2 rtl:translate-x-1/2 lg:static lg:order-first lg:translate-x-0"
+              /* The centering transform is scoped to < lg: an unscoped `rtl:`
+                 variant outranks `lg:translate-x-0` and shifted the desktop
+                 wordmark half-way off the header. */
+              className="absolute start-1/2 max-lg:-translate-x-1/2 max-lg:rtl:translate-x-1/2 lg:static lg:order-first lg:start-auto"
             >
               <Logo className={cn("transition-all duration-400", scrolled ? "h-7" : "h-8 lg:h-9")} />
             </Link>

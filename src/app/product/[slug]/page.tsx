@@ -13,6 +13,7 @@ import { SectionHeader } from "@/components/ui/Feedback";
 import { Reveal } from "@/components/ui/Reveal";
 import { toPersianDigits } from "@/lib/format";
 import { brand } from "@/data/site";
+import { absoluteUrl, sharedOpenGraph, siteConfig } from "@/config/site";
 
 type Params = Promise<{ slug: string }>;
 
@@ -25,13 +26,18 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const product = getProductBySlug(slug);
   if (!product) return { title: "محصول پیدا نشد" };
 
+  const origin =
+    product.origin?.country ?? (product.roast ? roastLabels[product.roast] : product.tagline);
+
   return {
-    title: `${product.title} — ${product.tagline}`,
+    title: `خرید ${product.title}، ${origin}`,
     description: product.description,
     alternates: { canonical: `/product/${product.slug}` },
     openGraph: {
+      ...sharedOpenGraph,
       type: "website",
-      title: `${product.title} | ${brand.name}`,
+      url: absoluteUrl(`/product/${product.slug}`),
+      title: `${product.title}، ${origin} | ${brand.name}`,
       description: product.description,
       images: [{ url: product.images[0], width: 1200, height: 1200, alt: product.title }],
     },
@@ -47,29 +53,72 @@ export default async function ProductPage({ params }: { params: Params }) {
   const related = getRelatedProducts(slug, 4);
   const category = getCategory(product.category);
 
-  /* Product structured data for rich results. */
+  /* Product structured data for rich results.
+     UI prices are Toman; schema.org needs the ISO currency, so IRR = Toman×10. */
+  const priceRial = product.price * 10;
+  const hasReviews = reviews.length > 0 && product.reviewCount > 0;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.title,
     description: product.description,
-    image: product.images,
+    image: product.images.map((src) => absoluteUrl(src)),
     sku: product.id,
+    inLanguage: siteConfig.languageTag,
     brand: { "@type": "Brand", name: brand.name },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: product.rating,
-      reviewCount: product.reviewCount,
-    },
+    ...(hasReviews
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: product.rating,
+            reviewCount: product.reviewCount,
+            bestRating: 5,
+            worstRating: 1,
+          },
+          review: reviews.slice(0, 3).map((r) => ({
+            "@type": "Review",
+            author: { "@type": "Person", name: r.author },
+            reviewRating: { "@type": "Rating", ratingValue: r.rating, bestRating: 5 },
+            reviewBody: r.body,
+          })),
+        }
+      : {}),
     offers: {
       "@type": "Offer",
-      price: product.price,
+      price: priceRial,
       priceCurrency: "IRR",
+      itemCondition: "https://schema.org/NewCondition",
       availability: product.inStock
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
-      url: `https://darband.coffee/product/${product.slug}`,
+      url: absoluteUrl(`/product/${product.slug}`),
     },
+  };
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "خانه", item: absoluteUrl("/") },
+      { "@type": "ListItem", position: 2, name: "فروشگاه", item: absoluteUrl("/shop") },
+      ...(category
+        ? [
+            {
+              "@type": "ListItem",
+              position: 3,
+              name: category.title,
+              item: absoluteUrl(`/shop?category=${category.slug}`),
+            },
+          ]
+        : []),
+      {
+        "@type": "ListItem",
+        position: category ? 4 : 3,
+        name: product.title,
+        item: absoluteUrl(`/product/${product.slug}`),
+      },
+    ],
   };
 
   const specs = [
@@ -88,6 +137,10 @@ export default async function ProductPage({ params }: { params: Params }) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
       <div className="container-page pt-6">
@@ -166,7 +219,7 @@ export default async function ProductPage({ params }: { params: Params }) {
                 content: (
                   <p>
                     {product.brewingTip ??
-                      "برای این محصول دستور دم‌آوری خاصی لازم نیست؛ راهنمای کلی دربند را دنبال کنید."}
+                      "برای این محصول دستور دم‌آوری خاصی لازم نیست؛ راهنمای کلی قهوینو را دنبال کنید."}
                   </p>
                 ),
               },

@@ -21,7 +21,7 @@ export function BrewingGuide({ compact = false }: { compact?: boolean }) {
           <SectionHeader
             eyebrow="راهنمای دم‌آوری"
             title="این قهوه را چطور دم کنیم؟"
-            description="پارامترهای پیشنهادی تیم دربند برای چهار روش پرکاربرد."
+            description="پارامترهای پیشنهادی تیم قهوینو برای چهار روش پرکاربرد."
           />
         )}
         {compact && (

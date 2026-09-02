@@ -87,7 +87,7 @@ export function Subscription() {
           <div className="relative mt-10 hidden aspect-16/9 overflow-hidden rounded-3xl lg:block">
             <Image
               src="/images/lifestyle/2.jpg"
-              alt="بسته اشتراک ماهانه قهوه دربند"
+              alt="بسته اشتراک ماهانه قهوه قهوینو"
               fill
               loading="lazy"
               sizes="50vw"
@@ -234,15 +234,21 @@ export function Testimonials() {
           {testimonials.map((t, i) => (
             <button
               key={t.id}
+              type="button"
               role="tab"
               aria-selected={i === index}
               aria-label={`نظر ${t.author}`}
               onClick={() => setIndex(i)}
-              className={cn(
-                "h-1.5 rounded-full transition-all duration-300",
-                i === index ? "w-8 bg-espresso-900" : "w-3 bg-beige-300 hover:bg-ash-400",
-              )}
-            />
+              className="flex h-6 min-w-6 items-center justify-center px-1"
+            >
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "block h-1.5 rounded-full transition-all duration-300",
+                  i === index ? "w-8 bg-espresso-900" : "w-3 bg-beige-300 hover:bg-ash-400",
+                )}
+              />
+            </button>
           ))}
         </div>
       </div>

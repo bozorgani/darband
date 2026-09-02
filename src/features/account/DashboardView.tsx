@@ -51,7 +51,7 @@ export function DashboardView() {
   return (
     <>
       <AccountPageHeader
-        title={`${fullName(user) || "دوست دربندی"} عزیز، خوش آمدید`}
+        title={`${fullName(user) || "دوست قهوینویی"} عزیز، خوش آمدید`}
         description="از این‌جا سفارش‌ها، نشانی‌ها و علاقه‌مندی‌های خود را مدیریت کنید."
       />
 

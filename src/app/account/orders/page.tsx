@@ -3,7 +3,7 @@ import { OrdersView } from "@/features/account/OrdersView";
 
 export const metadata: Metadata = {
   title: "سفارش‌های من",
-  description: "پیگیری وضعیت سفارش‌های ثبت‌شده در دربند.",
+  description: "پیگیری وضعیت سفارش‌های ثبت‌شده در قهوینو.",
 };
 
 export default function OrdersPage() {

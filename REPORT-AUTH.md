@@ -1,6 +1,6 @@
 # گزارش مرحله دوم — احراز هویت موبایلی و پنل کاربری
 
-**پروژه:** فروشگاه قهوه تخصصی «دربند» · **مخزن:** `github.com/bozorgani/darband`
+**پروژه:** فروشگاه قهوه تخصصی «قهوینو» · **مخزن:** `github.com/bozorgani/darband`
 **دامنه این مرحله:** ورود/ثبت‌نام با شماره موبایل ایران + OTP نمایشی + پنل کاربری کامل
 **همچنان Frontend-only:** هیچ Backend، API Route، Server Action، دیتابیس، سرویس پیامک، JWT یا درگاه پرداختی ساخته نشده است.
 
@@ -157,3 +157,11 @@ Data          src/data/mock-user.ts
 ```
 (پاک — همهٔ تغییرات در کامیت feat: add mobile OTP authentication and customer account ثبت شد)
 ```
+
+---
+
+> **به‌روزرسانی — ری‌برند به «قهوینو»:** متن‌های صفحه ورود، تأیید کد و پنل کاربری با نام
+> «قهوینو» بازنویسی شده‌اند و همه این مسیرها `noindex, nofollow` هستند، در `robots.txt`
+> مسدودند و در `sitemap.xml` نمی‌آیند. کلیدهای `darband.auth.session.v1` و
+> `darband.auth.challenge.v1` عمداً تغییر نکرده‌اند تا نشست کاربران فعلی باطل نشود؛
+> توضیح کامل در [`RESPONSIVE_SEO_AUDIT.md`](./RESPONSIVE_SEO_AUDIT.md).

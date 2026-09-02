@@ -10,7 +10,7 @@ export function Hero() {
       {/* Background */}
       <Image
         src="/images/hero.jpg"
-        alt="دم‌آوری اسپرسو تازه در رست‌خانه دربند"
+        alt="دم‌آوری اسپرسو تازه در رست‌خانه قهوینو"
         fill
         priority
         sizes="100vw"
@@ -33,7 +33,7 @@ export function Hero() {
           </span>
 
           <h1 className="mt-6 text-[2.6rem] font-black leading-[1.1] tracking-tight animate-fade-up sm:text-6xl lg:text-[4.5rem]">
-            هر فنجان،
+            قهوه تازه‌رست،
             <br />
             <span className="text-accent-400">روایتِ یک دانه</span>
           </h1>
@@ -42,8 +42,8 @@ export function Hero() {
             className="mt-5 max-w-xl text-sm/8 text-cream-100/75 animate-fade-up sm:text-base/9"
             style={{ animationDelay: "120ms" }}
           >
-            {brand.name} دانه‌ها را مستقیم از مزارع منتخب آفریقا و آمریکای لاتین تهیه می‌کند،
-            در تهران رست می‌کند و کمتر از ۴۸ ساعت بعد به دست شما می‌رساند.
+            {brand.name} دانه‌های تک‌خاستگاه آفریقا و آمریکای لاتین را در تهران رست می‌کند و
+            تاریخ رست را روی هر بسته می‌نویسد.
           </p>
 
           <div
@@ -96,7 +96,7 @@ export function TrustStrip() {
   ];
 
   return (
-    <section aria-label="مزیت‌های خرید از دربند" className="border-b border-beige-300/60 bg-cream-50">
+    <section aria-label="مزیت‌های خرید از قهوینو" className="border-b border-beige-300/60 bg-cream-50">
       <div className="container-page grid gap-6 py-7 sm:grid-cols-3">
         {items.map((item) => (
           <div key={item.title} className="flex items-center gap-3">

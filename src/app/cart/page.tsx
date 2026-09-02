@@ -4,7 +4,7 @@ import { Breadcrumb } from "@/components/ui/Disclosure";
 
 export const metadata: Metadata = {
   title: "سبد خرید",
-  description: "بررسی و ویرایش سبد خرید قهوه دربند پیش از نهایی کردن سفارش.",
+  description: "بررسی و ویرایش سبد خرید قهوه قهوینو پیش از نهایی کردن سفارش.",
   alternates: { canonical: "/cart" },
   robots: { index: false, follow: true },
 };

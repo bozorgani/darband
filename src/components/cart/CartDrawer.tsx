@@ -77,13 +77,13 @@ export function CartDrawer() {
           <EmptyState
             icon={<BagIcon className="size-7" />}
             title="سبد خرید شما خالی است"
-            description="از میان قهوه‌های تک‌خاستگاه، ترکیب‌های امضای دربند و تجهیزات دم‌آوری انتخاب کنید."
+            description="از میان قهوه‌های تک‌خاستگاه، ترکیب‌های امضای قهوینو و تجهیزات دم‌آوری انتخاب کنید."
             actionLabel="رفتن به فروشگاه"
             actionHref="/shop"
             className="border-0 bg-transparent py-10"
           />
           <div className="mt-4 space-y-5">
-            <h3 className="text-sm font-bold text-espresso-900">پیشنهاد دربند</h3>
+            <h3 className="text-sm font-bold text-espresso-900">پیشنهاد قهوینو</h3>
             {suggestions.map((p) => (
               <ProductCard key={p.id} product={p} variant="compact" />
             ))}

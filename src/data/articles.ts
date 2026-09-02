@@ -12,7 +12,7 @@ export const articles: Article[] = [
     image: "/images/lifestyle/1.jpg",
     date: "۱۴۰۴/۰۴/۲۵",
     readingTime: 8,
-    author: "تیم دربند",
+    author: "تیم قهوینو",
     featured: true,
     body: [
       {
@@ -51,7 +51,7 @@ export const articles: Article[] = [
     image: "/images/roastery.jpg",
     date: "۱۴۰۴/۰۴/۱۰",
     readingTime: 6,
-    author: "تیم دربند",
+    author: "تیم قهوینو",
     body: [
       {
         paragraphs: [
@@ -82,7 +82,7 @@ export const articles: Article[] = [
     image: "/images/lifestyle/2.jpg",
     date: "۱۴۰۴/۰۳/۲۲",
     readingTime: 5,
-    author: "تیم دربند",
+    author: "تیم قهوینو",
     body: [
       {
         paragraphs: [
@@ -102,7 +102,7 @@ export const articles: Article[] = [
     image: "/images/products/espresso-1.jpg",
     date: "۱۴۰۴/۰۳/۰۸",
     readingTime: 9,
-    author: "تیم دربند",
+    author: "تیم قهوینو",
     body: [
       {
         paragraphs: [
@@ -142,7 +142,7 @@ export const articles: Article[] = [
     image: "/images/lifestyle/3.jpg",
     date: "۱۴۰۴/۰۱/۲۷",
     readingTime: 4,
-    author: "تیم دربند",
+    author: "تیم قهوینو",
     body: [
       {
         paragraphs: [

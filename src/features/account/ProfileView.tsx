@@ -202,7 +202,7 @@ export function ProfileView() {
             {saving ? "در حال ذخیره…" : "ذخیره تغییرات"}
           </Button>
           <p className="text-[0.7rem] text-ash-600">
-            عضو دربند از {user.createdAt}
+            عضو قهوینو از {user.createdAt}
           </p>
         </div>
       </form>

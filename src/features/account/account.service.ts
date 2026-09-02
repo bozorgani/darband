@@ -24,6 +24,10 @@ import type {
  * State is kept in `localStorage` for the demo (see `AccountProvider`).
  */
 
+/* Legacy `darband.*` storage keys are kept intentionally after the Ghahvino
+   rebrand: they are internal, never exposed to users or crawlers, and renaming
+   them would drop existing carts / wishlists / sessions of returning visitors.
+   See RESPONSIVE_SEO_AUDIT.md § «کلیدهای ذخیره‌سازی». */
 export const STORAGE_KEYS = {
   addresses: "darband.account.addresses.v1",
   notifications: "darband.account.notifications.v1",

@@ -56,6 +56,7 @@ export function Rating({
   const starSize = size === "sm" ? "size-3.5" : "size-[1.05rem]";
   return (
     <div
+      role="img"
       className={cn("flex items-center gap-1.5", className)}
       aria-label={`امتیاز ${formatRating(value)} از ۵${count ? ` بر اساس ${toPersianDigits(count)} نظر` : ""}`}
     >

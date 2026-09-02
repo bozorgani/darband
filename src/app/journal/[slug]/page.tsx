@@ -7,6 +7,8 @@ import { Breadcrumb } from "@/components/ui/Disclosure";
 import { formatReadingTime } from "@/lib/format";
 import { ButtonLink } from "@/components/ui/Button";
 import { brand } from "@/data/site";
+import { absoluteUrl, sharedOpenGraph, siteConfig } from "@/config/site";
+import { jalaliToIsoDate } from "@/lib/format";
 
 type Params = Promise<{ slug: string }>;
 
@@ -19,14 +21,19 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const article = getArticleBySlug(slug);
   if (!article) return { title: "مقاله پیدا نشد" };
 
+  const published = jalaliToIsoDate(article.date);
+
   return {
-    title: article.title,
+    title: { absolute: `${article.title} | مجله قهوینو` },
     description: article.excerpt,
     alternates: { canonical: `/journal/${article.slug}` },
     openGraph: {
+      ...sharedOpenGraph,
       type: "article",
+      url: absoluteUrl(`/journal/${article.slug}`),
       title: article.title,
       description: article.excerpt,
+      ...(published ? { publishedTime: published } : {}),
       images: [{ url: article.image, alt: article.title }],
     },
   };
@@ -39,14 +46,38 @@ export default async function ArticlePage({ params }: { params: Params }) {
 
   const related = articles.filter((a) => a.slug !== slug).slice(0, 3);
 
+  const published = jalaliToIsoDate(article.date);
+
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Article",
+    "@type": "BlogPosting",
     headline: article.title,
     description: article.excerpt,
-    image: article.image,
+    image: absoluteUrl(article.image),
+    inLanguage: siteConfig.languageTag,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": absoluteUrl(`/journal/${article.slug}`),
+    },
     author: { "@type": "Organization", name: article.author },
     publisher: { "@type": "Organization", name: brand.name },
+    /* Real content date only — never a build timestamp. */
+    ...(published ? { datePublished: published, dateModified: published } : {}),
+  };
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "خانه", item: absoluteUrl("/") },
+      { "@type": "ListItem", position: 2, name: "ژورنال", item: absoluteUrl("/journal") },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: article.title,
+        item: absoluteUrl(`/journal/${article.slug}`),
+      },
+    ],
   };
 
   return (
@@ -54,6 +85,10 @@ export default async function ArticlePage({ params }: { params: Params }) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
       <article>

@@ -43,7 +43,7 @@ export const categories: Category[] = [
   {
     slug: "blend",
     title: "قهوه ترکیبی",
-    subtitle: "امضای دربند",
+    subtitle: "امضای قهوینو",
     description: "ترکیب‌های خانگی ما؛ ساخته‌شده برای تکرارپذیری هر روز صبح.",
     image: "/images/products/blend-1.jpg",
   },

@@ -5,7 +5,7 @@ import { AccountProvider } from "@/features/account/AccountProvider";
 import { AccountShell } from "@/features/account/AccountShell";
 
 export const metadata: Metadata = {
-  title: { default: "حساب کاربری", template: "%s | حساب کاربری دربند" },
+  title: { default: "حساب کاربری", template: "%s | حساب کاربری قهوینو" },
   /* Private area: never indexed, never in the sitemap. */
   robots: { index: false, follow: false, nocache: true },
   alternates: { canonical: undefined },

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
-import { brand, footerNav, legalLinks, socialLinks } from "@/data/site";
+import { brand, footerNav, hasContactInfo, legalLinks, socialLinks } from "@/data/site";
 import { socialIcons, MailIcon, PhoneIcon, PinIcon, ClockIcon, CheckIcon } from "@/components/ui/Icons";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/Button";
@@ -15,7 +15,7 @@ export function Footer() {
         {/* Newsletter */}
         <div className="grid gap-10 border-b border-cream-100/12 pb-14 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-16">
           <div>
-            <p className="eyebrow text-accent-400">خبرنامه دربند</p>
+            <p className="eyebrow text-accent-400">خبرنامه قهوینو</p>
             <h2 className="mt-3 text-2xl leading-snug text-cream-50 sm:text-3xl">
               هر جمعه، یک نامه کوتاه درباره قهوه
             </h2>
@@ -32,28 +32,45 @@ export function Footer() {
           <div>
             <Logo className="h-9 text-cream-50" />
             <p className="mt-5 max-w-xs text-sm/7 text-cream-100/60">{brand.description}</p>
-            <ul className="mt-6 space-y-2.5 text-sm text-cream-100/70">
-              <li className="flex items-start gap-2.5">
-                <PinIcon className="mt-0.5 size-4 shrink-0 text-accent-400" />
-                {brand.address}
-              </li>
-              <li className="flex items-center gap-2.5">
-                <PhoneIcon className="size-4 shrink-0 text-accent-400" />
-                <a href="tel:+982188881234" className="transition hover:text-cream-50">
-                  {brand.phone}
-                </a>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <MailIcon className="size-4 shrink-0 text-accent-400" />
-                <a href={`mailto:${brand.email}`} className="latin transition hover:text-cream-50">
-                  {brand.email}
-                </a>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <ClockIcon className="size-4 shrink-0 text-accent-400" />
-                {brand.hours}
-              </li>
-            </ul>
+            {hasContactInfo ? (
+              <ul className="mt-6 space-y-2.5 text-sm text-cream-100/70">
+                {brand.address && (
+                  <li className="flex items-start gap-2.5">
+                    <PinIcon className="mt-0.5 size-4 shrink-0 text-accent-400" />
+                    {brand.address}
+                  </li>
+                )}
+                {brand.phone && brand.phoneHref && (
+                  <li className="flex items-center gap-2.5">
+                    <PhoneIcon className="size-4 shrink-0 text-accent-400" />
+                    <a href={`tel:${brand.phoneHref}`} className="transition hover:text-cream-50">
+                      {brand.phone}
+                    </a>
+                  </li>
+                )}
+                {brand.email && (
+                  <li className="flex items-center gap-2.5">
+                    <MailIcon className="size-4 shrink-0 text-accent-400" />
+                    <a
+                      href={`mailto:${brand.email}`}
+                      className="latin transition hover:text-cream-50"
+                    >
+                      {brand.email}
+                    </a>
+                  </li>
+                )}
+                {brand.hours && (
+                  <li className="flex items-center gap-2.5">
+                    <ClockIcon className="size-4 shrink-0 text-accent-400" />
+                    {brand.hours}
+                  </li>
+                )}
+              </ul>
+            ) : (
+              <p className="mt-6 text-sm/7 text-cream-100/50">
+                راه‌های ارتباطی قهوینو به‌زودی از همین‌جا در دسترس قرار می‌گیرد.
+              </p>
+            )}
           </div>
 
           {footerNav.map((group) => (
@@ -96,6 +113,7 @@ export function Footer() {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Empty until the official Ghahvino accounts are confirmed. */}
             {socialLinks.map((s) => {
               const Icon = socialIcons[s.icon];
               return (

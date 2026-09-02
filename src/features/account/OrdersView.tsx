@@ -94,7 +94,7 @@ export function OrdersView() {
           <EmptyState
             icon={<BoxIcon className="size-7" />}
             title="سفارشی با این مشخصات پیدا نشد"
-            description="فیلتر وضعیت یا عبارت جستجو را تغییر دهید، یا از فروشگاه دربند خرید تازه‌ای را شروع کنید."
+            description="فیلتر وضعیت یا عبارت جستجو را تغییر دهید، یا از فروشگاه قهوینو خرید تازه‌ای را شروع کنید."
             actionLabel="رفتن به فروشگاه"
             actionHref="/shop"
           />

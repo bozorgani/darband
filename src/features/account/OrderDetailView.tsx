@@ -10,11 +10,9 @@ import {
   CheckIcon,
   DownloadIcon,
   MailIcon,
-  PhoneIcon,
   RefreshIcon,
   TruckIcon,
 } from "@/components/ui/Icons";
-import { brand } from "@/data/site";
 import { orderStatusLabels } from "@/data/mock-user";
 import { formatNumber, toPersianDigits } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -263,23 +261,16 @@ export function OrderDetailView({ orderId }: { orderId: string }) {
           <section className="rounded-3xl bg-espresso-900 p-5 text-cream-50">
             <h2 className="text-sm font-bold">پشتیبانی سفارش</h2>
             <p className="mt-2 text-xs/6 text-cream-100/70">
-              درباره این سفارش سؤالی دارید؟ تیم دربند {brand.hours} پاسخگوی شماست.
+              درباره این سفارش سؤالی دارید؟ پیام خود را از صفحه تماس برای تیم قهوینو بفرستید.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
-              <a
-                href={`tel:${brand.phone.replace(/\s/g, "")}`}
-                className="inline-flex h-9 items-center gap-2 rounded-full bg-white/10 px-4 text-xs font-semibold transition hover:bg-white/20"
-              >
-                <PhoneIcon className="size-4" />
-                تماس تلفنی
-              </a>
-              <a
-                href={`mailto:${brand.email}`}
+              <Link
+                href="/contact"
                 className="inline-flex h-9 items-center gap-2 rounded-full bg-white/10 px-4 text-xs font-semibold transition hover:bg-white/20"
               >
                 <MailIcon className="size-4" />
-                ارسال ایمیل
-              </a>
+                تماس با پشتیبانی
+              </Link>
             </div>
           </section>
 

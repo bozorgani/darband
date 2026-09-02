@@ -8,9 +8,9 @@ import { LifestyleGallery, JournalTeaser } from "@/components/home/Gallery";
 import { brand } from "@/data/site";
 
 export const metadata: Metadata = {
-  title: `${brand.name} | ${brand.tagline}`,
+  title: { absolute: `خرید قهوه تازه‌رست و تخصصی | ${brand.name}` },
   description:
-    "خرید آنلاین قهوه تخصصی تازه رست‌شده: قهوه دانه، آسیاب‌شده، اسپرسو، کپسول و تجهیزات دم‌آوری. ارسال کمتر از ۴۸ ساعت پس از رست.",
+    "خرید آنلاین قهوه دانه و آسیاب‌شده تازه‌رست از قهوینو؛ انتخاب بر اساس خاستگاه، درجه رست، یادداشت‌های طعمی و روش دم‌آوری، به‌همراه تجهیزات دم‌آوری.",
   alternates: { canonical: "/" },
 };
 

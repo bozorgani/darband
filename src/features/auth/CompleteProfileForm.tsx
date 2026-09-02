@@ -146,7 +146,7 @@ export function CompleteProfileForm({ next }: { next?: string }) {
               errors.terms && "outline outline-2 outline-danger",
             )}
           />
-          <span>قوانین و مقررات و سیاست حریم خصوصی دربند را می‌پذیرم.</span>
+          <span>قوانین و مقررات و سیاست حریم خصوصی قهوینو را می‌پذیرم.</span>
         </label>
         {errors.terms && (
           <p role="alert" className="text-xs font-medium text-danger">
@@ -161,7 +161,7 @@ export function CompleteProfileForm({ next }: { next?: string }) {
             onChange={(e) => setNewsletter(e.target.checked)}
             className="mt-0.5 size-[18px] shrink-0 rounded-[6px] accent-espresso-900"
           />
-          <span>خبرنامه دربند و پیشنهادهای ویژه برایم ارسال شود.</span>
+          <span>خبرنامه قهوینو و پیشنهادهای ویژه برایم ارسال شود.</span>
         </label>
       </div>
 

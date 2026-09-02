@@ -128,7 +128,7 @@ export const mockOrders: Order[] = [
       {
         productId: "p-005",
         slug: "signature-espresso",
-        title: "اسپرسوی امضای دربند",
+        title: "اسپرسوی امضای قهوینو",
         image: "/images/products/espresso-1.jpg",
         unitPrice: 430_000,
         quantity: 1,
@@ -305,7 +305,7 @@ export const mockNotifications: AppNotification[] = [
   {
     id: "n-006",
     kind: "offer",
-    title: "اشتراک ماهانه دربند",
+    title: "اشتراک ماهانه قهوینو",
     body: "با فعال‌سازی اشتراک، هر ماه یک خاستگاه تازه دریافت کنید.",
     date: "۱۴۰۴/۰۴/۰۲",
     read: true,

@@ -36,6 +36,10 @@ export const OTP_TTL_SECONDS = 120;
 export const OTP_RESEND_SECONDS = 45;
 export const OTP_MAX_ATTEMPTS = 3;
 
+/* Legacy `darband.*` storage keys are kept intentionally after the Ghahvino
+   rebrand: they are internal, never exposed to users or crawlers, and renaming
+   them would drop existing carts / wishlists / sessions of returning visitors.
+   See RESPONSIVE_SEO_AUDIT.md § «کلیدهای ذخیره‌سازی». */
 const SESSION_KEY = "darband.auth.session.v1";
 const CHALLENGE_KEY = "darband.auth.challenge.v1";
 

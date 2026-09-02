@@ -1,4 +1,4 @@
-# راهنمای اجرای پروژهٔ دربند
+# راهنمای اجرای پروژهٔ قهوینو
 
 پروژه **فرانت‌اند خالص** است: نه دیتابیس دارد، نه فایل `.env`، نه سرویس جانبی. فقط Node.js لازم است.
 
@@ -114,7 +114,7 @@ node qa/shots.cjs      # اسکرین‌شات تمام‌صفحه از ۸ صف�
   می‌شود و باید `images.unoptimized = true` را هم ست کنید.
 
 قبل از استقرار واقعی، دامنه را در `metadataBase` داخل `src/app/layout.tsx`
-(الان `https://darband.coffee`) و در `src/app/sitemap.ts` به‌روزرسانی کنید.
+(الان `https://ghahvino.ir`) و در `src/app/sitemap.ts` به‌روزرسانی کنید.
 
 ---
 
@@ -147,3 +147,25 @@ node qa/shots.cjs      # اسکرین‌شات تمام‌صفحه از ۸ صف�
 | خطای عجیب بعد از عوض کردن نسخهٔ Node | `rm -rf node_modules package-lock.json && npm install` |
 | `require("playwright")` پیدا نمی‌شود | اسکریپت‌های QA باید از داخل پوشهٔ پروژه اجرا شوند، نه از `/tmp` |
 | متن‌ها چپ‌چین شده‌اند | `dir="rtl"` روی `<html>` در `src/app/layout.tsx` تعریف شده؛ آن را حذف نکنید |
+
+---
+
+## ۹. دامنه، متغیرهای محیطی و انتشار
+
+| متغیر | نمونه | توضیح |
+|---|---|---|
+| `NEXT_PUBLIC_SITE_URL` | `https://ghahvino.ir` | مبنای canonical، `sitemap.xml`، `robots.txt`، OG و JSON-LD. باید `https` و بدون `www` و بدون اسلش انتهایی باشد. |
+
+`cp .env.example .env.local` و در صورت نیاز مقدار را برای staging عوض کنید. اگر متغیر تعریف
+نشود یا در پروداکشن روی `localhost` تنظیم شود، به‌صورت خودکار `https://ghahvino.ir` استفاده
+می‌شود تا هیچ canonical آلوده‌ای منتشر نشود.
+
+### ریدایرکت‌های لازم در هاست (نه در کد)
+
+| از | به | کد |
+|---|---|---|
+| `http://ghahvino.ir/*` | `https://ghahvino.ir/*` | 301 |
+| `https://www.ghahvino.ir/*` | `https://ghahvino.ir/*` | 301 |
+| `http(s)://(www.)darband.coffee/*` | `https://ghahvino.ir/*` با حفظ مسیر | 301 |
+
+جزئیات کامل ممیزی سئو و ریسپانسیو در [`RESPONSIVE_SEO_AUDIT.md`](./RESPONSIVE_SEO_AUDIT.md).

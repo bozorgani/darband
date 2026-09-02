@@ -15,7 +15,7 @@ export const defaultFilters: ProductFilters = {
 };
 
 export const sortOptions: { key: SortKey; label: string }[] = [
-  { key: "featured", label: "پیشنهاد دربند" },
+  { key: "featured", label: "پیشنهاد قهوینو" },
   { key: "newest", label: "جدیدترین" },
   { key: "price-asc", label: "ارزان‌ترین" },
   { key: "price-desc", label: "گران‌ترین" },
