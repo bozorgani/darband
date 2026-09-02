@@ -17,8 +17,8 @@ import type {
 /* ================================== Users ================================= */
 
 /** Phone numbers wired for QA (see README). */
-export const DEMO_EXISTING_PHONE = "09121234567";
-export const DEMO_NEW_PHONE = "09120000000";
+export const DEMO_EXISTING_PHONE = "+989121234567";
+export const DEMO_NEW_PHONE = "+989120000000";
 
 export const mockUser: AccountUser = {
   id: "u-001",
@@ -48,7 +48,7 @@ export const mockAddresses: Address[] = [
     id: "a-001",
     title: "خانه",
     recipient: "سارا محمدی",
-    phone: "09121234567",
+    phone: "+989121234567",
     province: "تهران",
     city: "تهران",
     line: "خیابان ولیعصر، بالاتر از پارک‌وی، کوچه یاسمن",
@@ -62,7 +62,7 @@ export const mockAddresses: Address[] = [
     id: "a-002",
     title: "محل کار",
     recipient: "سارا محمدی",
-    phone: "09121234567",
+    phone: "+989121234567",
     province: "تهران",
     city: "تهران",
     line: "خیابان شریعتی، نرسیده به میدان قدس، ساختمان آرام",

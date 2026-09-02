@@ -17,17 +17,12 @@ import { useToast } from "@/store/toast";
 import { useAuth } from "./AuthProvider";
 import { OTP_LENGTH, OTP_RESEND_SECONDS, OTP_TTL_SECONDS } from "./auth.service";
 import { maskPhone, normalizeDigits } from "./auth.utils";
+import { getSafeRedirectPath } from "./redirect";
 
 const EMPTY = Array.from({ length: OTP_LENGTH }, () => "");
 
 /** Step 2 — one-time code entry. */
-export function OtpForm({
-  next,
-  onNewUser,
-}: {
-  next?: string;
-  onNewUser: () => void;
-}) {
+export function OtpForm({ next }: { next?: string }) {
   const router = useRouter();
   const { toast } = useToast();
   const { pendingPhone, challenge, status, error, verifyCode, resendCode, resetFlow } = useAuth();
@@ -69,15 +64,14 @@ export function OtpForm({
         return;
       }
 
-      if (result.isNewUser) {
-        onNewUser();
-        return;
-      }
+      /* New accounts stay on this route: `VerifyEntry` derives the profile
+         step from the session, so a refresh cannot lose it. */
+      if (result.isNewUser) return;
 
       toast({ tone: "success", title: "خوش آمدید", description: "با موفقیت وارد حساب خود شدید." });
-      router.replace(next && next.startsWith("/") ? next : "/account");
+      router.replace(getSafeRedirectPath(next));
     },
-    [next, onNewUser, router, toast, verifyCode],
+    [next, router, toast, verifyCode],
   );
 
   /* State updaters stay pure: the next value is computed first, side effects

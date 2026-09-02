@@ -133,6 +133,8 @@ node qa/shots.cjs      # اسکرین‌شات تمام‌صفحه از ۸ صف�
 | تصاویر | `public/images/` |
 | کاربر، سفارش‌ها، نشانی‌ها و اعلان‌های نمایشی | `src/data/mock-user.ts` |
 | کد OTP نمایشی و قواعد آن | `src/features/auth/auth.service.ts` |
+| نرمال‌سازی شماره موبایل و کامل‌بودن پروفایل | `src/features/auth/auth.utils.ts` |
+| سیاست Redirect امن بعد از ورود | `src/features/auth/redirect.ts` |
 
 ---
 

@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Skeleton } from "@/components/ui/Primitives";
 import { useAuth } from "./AuthProvider";
 import { AuthShell } from "./AuthShell";
 import { OtpForm } from "./OtpForm";
 import { CompleteProfileForm } from "./CompleteProfileForm";
-
-type Step = "otp" | "profile";
+import { isProfileComplete } from "./auth.utils";
+import { getSafeRedirectPath } from "./redirect";
 
 /** `/auth/verify` — OTP entry, plus profile completion for brand-new accounts. */
 export function VerifyEntry() {
@@ -16,7 +16,10 @@ export function VerifyEntry() {
   const params = useSearchParams();
   const next = params.get("next") ?? undefined;
   const { pendingPhone, hydrated, isAuthenticated, user } = useAuth();
-  const [step, setStep] = useState<Step>("otp");
+
+  /* The step is derived from the session, never from local component state, so
+     a refresh in the middle of registration resumes on the profile form. */
+  const profileStep = hydrated && isAuthenticated && !isProfileComplete(user);
 
   /* Landing here without a pending challenge (direct link, cleared storage)
      is a dead end — send the visitor back to step 1. */
@@ -27,12 +30,10 @@ export function VerifyEntry() {
 
   /* Signed in with a finished profile? Nothing left to do here. */
   useEffect(() => {
-    if (hydrated && isAuthenticated && step === "otp" && user?.firstName) {
-      router.replace(next && next.startsWith("/") ? next : "/account");
+    if (hydrated && isAuthenticated && isProfileComplete(user)) {
+      router.replace(getSafeRedirectPath(next));
     }
-  }, [hydrated, isAuthenticated, step, user, next, router]);
-
-  const profileStep = step === "profile";
+  }, [hydrated, isAuthenticated, user, next, router]);
 
   return (
     <AuthShell
@@ -52,7 +53,7 @@ export function VerifyEntry() {
       ) : profileStep ? (
         <CompleteProfileForm next={next} />
       ) : (
-        <OtpForm next={next} onNewUser={() => setStep("profile")} />
+        <OtpForm next={next} />
       )}
     </AuthShell>
   );

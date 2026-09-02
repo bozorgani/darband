@@ -49,34 +49,77 @@ const typeOtp = async (page, code) => {
   /* 2. Invalid Iranian numbers are rejected */
   const invalids = [
     "0912123456", // too short
+    "091212345678", // too long
     "02112345678", // landline prefix
-    "abcdefghij", // letters
-    "9121234567", // 10 digits without the leading 0
-    "+989121234567", // international form is no longer accepted
+    "abcdefghij", // letters only
+    "+14155552671", // non-Iranian number
+    "+-() ", // symbols only
+    "", // empty
   ];
   let allRejected = true;
+  const rejectedDetail = [];
   for (const value of invalids) {
-    await page.getByTestId("phone-input").fill(value);
+    await page.getByTestId("phone-input").fill("");
+    if (value) await page.getByTestId("phone-input").fill(value);
     await page.getByTestId("send-code").click();
     await page.waitForTimeout(150);
     const msg = await page.locator("#phone-error").innerText();
-    if (!msg.includes("معتبر نیست") || page.url().includes("verify")) allRejected = false;
+    if (!msg.includes("معتبر نیست") || page.url().includes("verify")) {
+      allRejected = false;
+      rejectedDetail.push(value || "(empty)");
+    }
   }
-  check("Invalid Iranian phone numbers rejected with exact message", allRejected);
+  check(
+    "Invalid phone numbers rejected with exact message",
+    allRejected,
+    rejectedDetail.join(", "),
+  );
 
-  /* 2b. The field itself caps input at 11 digits and strips non-digits */
-  await page.getByTestId("phone-input").fill("");
-  await page.getByTestId("phone-input").type("+98 0912-345 678999", { delay: 5 });
-  const typed = await page.getByTestId("phone-input").inputValue();
-  check("Phone field keeps digits only and caps at 11 characters", /^\d{11}$/.test(typed), typed);
+  /* 2b. Every accepted format normalises to the same canonical number.
+        The masked phone is rendered from the canonical value, so identical
+        masks prove identical canonicalisation. */
+  const formats = [
+    ["09121234567", "local 11-digit"],
+    ["9121234567", "10-digit without leading zero"],
+    ["+989121234567", "international +98"],
+    ["00989121234567", "international 0098"],
+    ["۰۹۱۲۱۲۳۴۵۶۷", "Persian digits"],
+    ["\u0660\u0669\u0661\u0662\u0661\u0662\u0663\u0664\u0665\u0666\u0667", "Arabic-Indic digits"],
+    ["0912 123 4567", "spaces"],
+    ["0912-123-4567", "dashes"],
+    ["(+98) 912 123 4567", "parentheses + international"],
+  ];
+  const masks = [];
+  for (const [value, label] of formats) {
+    await page.goto(`${BASE}/auth`, { waitUntil: "networkidle" });
+    await page.getByTestId("phone-input").fill(value);
+    await page.getByTestId("send-code").click();
+    await page.waitForURL("**/auth/verify**", { timeout: 8000 });
+    masks.push(`${label}=${(await page.getByTestId("masked-phone").innerText()).trim()}`);
+  }
+  const uniqueMasks = [...new Set(masks.map((m) => m.split("=")[1]))];
+  check(
+    "All accepted phone formats produce one canonical number",
+    uniqueMasks.length === 1 && uniqueMasks[0].includes("۰۹۱۲") && uniqueMasks[0].includes("۴۵۶۷"),
+    uniqueMasks.join(" | "),
+  );
 
-  /* 3. An 11-digit 09… number is accepted (Persian digits included) */
-  await page.getByTestId("phone-input").fill("۰۹۱۲۱۲۳۴۵۶۷");
+  /* 2c. The field shows the local form and never a decorative +98 prefix.
+        `next` is restored here so the sign-in below still proves the
+        originally requested page is preserved. */
+  await page.goto(`${BASE}/auth?next=${encodeURIComponent("/account/orders")}`, {
+    waitUntil: "networkidle",
+  });
+  await page.getByTestId("phone-input").fill("+989121234567");
+  const shown = await page.getByTestId("phone-input").inputValue();
+  check("Pasted +98 number is displayed locally as 09…", shown === "09121234567", shown);
+  check("Phone input renders no +98 prefix decoration", !(await page.content()).includes("+۹۸"));
+
+  /* 3. Pasting the international form signs the existing user in */
   await page.getByTestId("send-code").click();
   await page.waitForURL("**/auth/verify**", { timeout: 8000 });
   const masked = await page.getByTestId("masked-phone").innerText();
-  check("Valid 11-digit 09… phone → OTP screen with masked number", masked.includes("۰۹۱۲"), masked);
-  check("Phone input never renders a +98 prefix", !(await page.content()).includes("+۹۸"));
+  check("Pasted +98 phone → OTP screen with masked number", masked.includes("۰۹۱۲"), masked);
 
   /* 4. Wrong code → error, inputs cleared */
   await typeOtp(page, "11111");
@@ -295,6 +338,29 @@ const typeOtp = async (page, code) => {
     (await page.locator("body").innerText()).includes("پذیرش قوانین الزامی است"),
   );
 
+  /* Fix 1 regression: a refresh during registration must not fall back to OTP */
+  await page.reload({ waitUntil: "networkidle" });
+  await page.waitForTimeout(600);
+  check(
+    "Profile step survives a page refresh",
+    await page.getByTestId("profile-form").isVisible(),
+    page.url().split("localhost:3000")[1],
+  );
+  check(
+    "Refreshed registration does not fall back to the OTP form",
+    (await page.getByTestId("otp-0").count()) === 0,
+  );
+
+  /* …and /auth bounces a half-registered account back to the profile step */
+  await page.goto(`${BASE}/auth`, { waitUntil: "networkidle" });
+  await page.waitForTimeout(700);
+  check(
+    "Incomplete account visiting /auth is sent back to the profile step",
+    new URL(page.url()).pathname === "/auth/verify" &&
+      (await page.getByTestId("profile-form").isVisible()),
+    page.url().split("localhost:3000")[1],
+  );
+
   await page.getByTestId("first-name").fill("نگار");
   await page.getByTestId("last-name").fill("کیانی");
   await page.getByTestId("accept-terms").check();
@@ -303,6 +369,57 @@ const typeOtp = async (page, code) => {
   check(
     "New user finishes registration and enters the panel",
     (await page.locator("h1").first().innerText()).includes("نگار"),
+  );
+
+  await page.reload({ waitUntil: "networkidle" });
+  await page.waitForTimeout(500);
+  check(
+    "Session of the freshly registered user survives a refresh of /account",
+    new URL(page.url()).pathname === "/account" &&
+      (await page.locator("h1").first().innerText()).includes("نگار"),
+  );
+
+  /* 18b. Fix 3 regression: open-redirect targets are ignored */
+  const redirectCases = [
+    ["/account/orders", "/account/orders"],
+    ["//example.com", "/account"],
+    ["https://example.com", "/account"],
+    ["javascript:alert(1)", "/account"],
+    ["/%5cexample.com", "/account"],
+    ["/account\\..\\evil", "/account"],
+    ["data:text/html,<h1>x</h1>", "/account"],
+  ];
+  let redirectsSafe = true;
+  const redirectDetail = [];
+  for (const [target, expected] of redirectCases) {
+    await page.goto(`${BASE}/auth?next=${encodeURIComponent(target)}`, {
+      waitUntil: "networkidle",
+    });
+    await page.waitForTimeout(700); // signed in → the entry page redirects itself
+    const url = new URL(page.url());
+    if (url.origin !== BASE || url.pathname !== expected) {
+      redirectsSafe = false;
+      redirectDetail.push(`${target} → ${url.href}`);
+    }
+  }
+  check("Safe redirect policy honours /account/* and blocks the rest", redirectsSafe,
+    redirectDetail.join(" | "));
+
+  /* 18c. …and the same policy applies to a full sign-in with a hostile next */
+  await page.getByTestId("logout-desktop").click().catch(() => {});
+  await page.waitForTimeout(600);
+  await page.goto(`${BASE}/auth?next=${encodeURIComponent("//example.com")}`, {
+    waitUntil: "networkidle",
+  });
+  await page.getByTestId("phone-input").fill(EXISTING);
+  await page.getByTestId("send-code").click();
+  await page.waitForURL("**/auth/verify**", { timeout: 8000 });
+  await typeOtp(page, OTP);
+  await page.waitForURL("**/account", { timeout: 10000 });
+  check(
+    "Sign-in with next=//example.com lands on /account, origin unchanged",
+    new URL(page.url()).origin === BASE && new URL(page.url()).pathname === "/account",
+    page.url(),
   );
 
   /* 19. Keyboard-only OTP flow */

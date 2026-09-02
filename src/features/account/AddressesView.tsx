@@ -14,7 +14,10 @@ import {
   isValidIranMobile,
   isValidPostalCode,
   normalizeDigits,
+  formatPhoneForDisplay,
+  sanitizePhoneInput,
   toCanonicalPhone,
+  toLocalPhone,
 } from "@/features/auth/auth.utils";
 import type { Address, AddressPayload } from "./account.types";
 import { useAccount } from "./AccountProvider";
@@ -92,7 +95,7 @@ export function AddressesView() {
                 <br />
                 کدپستی: <span className="latin">{toPersianDigits(address.postalCode)}</span>
                 <br />
-                تلفن: <span className="latin">{toPersianDigits(address.phone)}</span>
+                تلفن: <span className="latin">{formatPhoneForDisplay(address.phone)}</span>
                 {address.note && (
                   <>
                     <br />
@@ -212,7 +215,7 @@ function AddressFormDrawer({
 }) {
   const [form, setForm] = useState<AddressPayload>(() =>
     address
-      ? { ...address }
+      ? { ...address, phone: toLocalPhone(address.phone) }
       : emptyPayload,
   );
   const [errors, setErrors] = useState<FormErrors>({});
@@ -310,11 +313,10 @@ function AddressFormDrawer({
             dir="ltr"
             autoComplete="tel"
             placeholder="09123456789"
-            maxLength={11}
             value={form.phone}
             error={errors.phone}
             data-testid="address-phone"
-            onChange={(e) => set("phone", e.target.value.replace(/\D/g, "").slice(0, 11))}
+            onChange={(e) => set("phone", sanitizePhoneInput(e.target.value))}
           />
         </div>
 

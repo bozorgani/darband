@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/store/toast";
 import { useAuth } from "./AuthProvider";
 import { isValidEmail } from "./auth.utils";
+import { getSafeRedirectPath } from "./redirect";
 
 interface Errors {
   firstName?: string;
@@ -77,7 +78,7 @@ export function CompleteProfileForm({ next }: { next?: string }) {
       title: `${firstName} عزیز، خوش آمدید`,
       description: "حساب کاربری شما ساخته شد.",
     });
-    router.replace(next && next.startsWith("/") ? next : "/account");
+    router.replace(getSafeRedirectPath(next));
   }
 
   return (

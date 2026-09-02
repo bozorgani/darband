@@ -10,7 +10,12 @@ import { cn } from "@/lib/utils";
 import { toPersianDigits } from "@/lib/format";
 import { useToast } from "@/store/toast";
 import { useAuth } from "@/features/auth/AuthProvider";
-import { formatPhoneForDisplay, isValidEmail, isValidIranMobile } from "@/features/auth/auth.utils";
+import {
+  formatPhoneForDisplay,
+  isValidEmail,
+  isValidIranMobile,
+  sanitizePhoneInput,
+} from "@/features/auth/auth.utils";
 import {
   confirmPhoneChange,
   requestPhoneChange,
@@ -307,12 +312,11 @@ function PhoneChangeModal({
             dir="ltr"
             autoComplete="tel"
             placeholder="09123456789"
-            maxLength={11}
             value={phone}
             error={error ?? undefined}
             hint="۱۱ رقم، با ۰۹ شروع شود."
             onChange={(e) => {
-              setPhone(e.target.value.replace(/\D/g, "").slice(0, 11));
+              setPhone(sanitizePhoneInput(e.target.value));
               setError(null);
             }}
           />

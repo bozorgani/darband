@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "./AuthProvider";
+import { isProfileComplete } from "./auth.utils";
+import { getSafeRedirectPath, isSafeInternalPath } from "./redirect";
 import { AuthShell } from "./AuthShell";
 import { PhoneForm } from "./PhoneForm";
 import { Skeleton } from "@/components/ui/Primitives";
@@ -12,14 +14,19 @@ export function AuthEntry() {
   const router = useRouter();
   const params = useSearchParams();
   const next = params.get("next") ?? undefined;
-  const { isAuthenticated, hydrated } = useAuth();
+  const { isAuthenticated, hydrated, user } = useAuth();
 
-  /* Already signed in? Skip the flow. */
+  /* Already signed in? Skip the flow — but a half-registered account has to
+     finish the profile step first. */
   useEffect(() => {
-    if (hydrated && isAuthenticated) {
-      router.replace(next && next.startsWith("/") ? next : "/account");
+    if (!hydrated || !isAuthenticated) return;
+    if (!isProfileComplete(user)) {
+      const query = isSafeInternalPath(next) ? `?next=${encodeURIComponent(next as string)}` : "";
+      router.replace(`/auth/verify${query}`);
+      return;
     }
-  }, [hydrated, isAuthenticated, next, router]);
+    router.replace(getSafeRedirectPath(next));
+  }, [hydrated, isAuthenticated, user, next, router]);
 
   return (
     <AuthShell

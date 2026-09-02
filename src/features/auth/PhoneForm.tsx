@@ -4,21 +4,13 @@ import { useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { ArrowLeftIcon } from "@/components/ui/Icons";
-import { toEnglishDigits, toPersianDigits } from "@/lib/format";
+import { toPersianDigits } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { useAuth } from "./AuthProvider";
-import { isValidIranMobile } from "./auth.utils";
+import { isValidIranMobile, sanitizePhoneInput } from "./auth.utils";
+import { isSafeInternalPath } from "./redirect";
 
 const INVALID_MESSAGE = "شماره موبایل واردشده معتبر نیست.";
-const PHONE_LENGTH = 11;
-
-/** Keeps only digits (Persian/Arabic included) and never exceeds 11 characters. */
-function sanitizePhone(raw: string): string {
-  return toEnglishDigits(raw)
-    .replace(/[\u0660-\u0669]/g, (d) => String(d.charCodeAt(0) - 0x0660))
-    .replace(/\D/g, "")
-    .slice(0, PHONE_LENGTH);
-}
 
 /**
  * Step 1 of the unified sign-in / sign-up flow: the phone number.
@@ -48,7 +40,7 @@ export function PhoneForm({ next }: { next?: string }) {
     setLocalError(null);
     const ok = await sendCode(value);
     if (ok) {
-      const query = next ? `?next=${encodeURIComponent(next)}` : "";
+      const query = isSafeInternalPath(next) ? `?next=${encodeURIComponent(next as string)}` : "";
       router.push(`/auth/verify${query}`);
     } else {
       inputRef.current?.focus();
@@ -77,13 +69,11 @@ export function PhoneForm({ next }: { next?: string }) {
           dir="ltr"
           data-testid="phone-input"
           placeholder="09123456789"
-          maxLength={PHONE_LENGTH}
-          pattern="09[0-9]{9}"
           value={value}
           aria-invalid={Boolean(message)}
           aria-describedby={message ? "phone-error" : "phone-hint"}
           onChange={(e) => {
-            setValue(sanitizePhone(e.target.value));
+            setValue(sanitizePhoneInput(e.target.value));
             if (localError) setLocalError(null);
             if (error) clearError();
           }}

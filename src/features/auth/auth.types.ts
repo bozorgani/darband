@@ -5,7 +5,7 @@
  * swapping `auth.service.ts` for real HTTP calls will not touch the UI layer.
  */
 
-/** Canonical phone format used everywhere internally: `09121234567` (11 digits). */
+/** Canonical phone format used everywhere internally: `+989121234567`. */
 export type CanonicalPhone = string;
 
 export interface AccountUser {

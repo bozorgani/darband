@@ -4,6 +4,7 @@ import { useEffect, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/Primitives";
 import { useAuth } from "@/features/auth/AuthProvider";
+import { isSafeInternalPath } from "@/features/auth/redirect";
 
 /**
  * Client-side route guard for `/account/*`.
@@ -20,7 +21,9 @@ export function AccountGuard({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (hydrated && !isAuthenticated) {
-      router.replace(`/auth?next=${encodeURIComponent(pathname)}`);
+      /* Only allow-listed internal paths are forwarded as `next`. */
+      const query = isSafeInternalPath(pathname) ? `?next=${encodeURIComponent(pathname)}` : "";
+      router.replace(`/auth${query}`);
     }
   }, [hydrated, isAuthenticated, pathname, router]);
 
