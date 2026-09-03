@@ -61,7 +61,9 @@ export function DashboardView() {
           <SparkIcon className="size-3.5" />
           شماره تأییدشده
         </Badge>
-        <span className="latin text-sm font-semibold text-espresso-900">
+        {/* Persian digits (maskPhone) must not use the Latin serif, which has
+            no Persian glyphs. */}
+        <span className="text-sm font-semibold text-espresso-900">
           {maskPhone(user.phone)}
         </span>
 

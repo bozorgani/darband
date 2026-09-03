@@ -91,7 +91,7 @@ export function AccountMenu() {
         >
           <div className="border-b border-beige-300/60 px-3 pb-3 pt-2">
             <p className="truncate text-sm font-bold">{fullName(user) || "کاربر قهوینو"}</p>
-            <p className="latin mt-0.5 text-[0.7rem] text-ash-600">{maskPhone(user.phone)}</p>
+            <p className="mt-0.5 text-[0.7rem] text-ash-600">{maskPhone(user.phone)}</p>
           </div>
 
           <ul className="pt-2">

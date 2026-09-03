@@ -127,7 +127,9 @@ export function ProfileView() {
           </span>
           <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-cream-50 px-4 py-3">
             <LockIcon className="size-4 text-ash-600" />
-            <span className="latin text-sm font-bold text-espresso-900" data-testid="profile-phone">
+            {/* Persian digits (formatPhoneForDisplay) — keep the brand font, not
+                the Latin serif, which lacks Persian glyphs. */}
+            <span className="text-sm font-bold text-espresso-900" data-testid="profile-phone">
               {formatPhoneForDisplay(user.phone)}
             </span>
             <span className="inline-flex items-center gap-1 rounded-full bg-success/12 px-2 py-0.5 text-[0.65rem] font-semibold text-success">

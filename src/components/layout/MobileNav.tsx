@@ -123,7 +123,7 @@ export function MobileNav() {
                 <p className="truncate text-sm font-bold text-espresso-900">
                   {fullName(user) || "کاربر قهوینو"}
                 </p>
-                <p className="latin mt-0.5 text-[0.7rem] text-ash-600">{maskPhone(user.phone)}</p>
+                <p className="mt-0.5 text-[0.7rem] text-ash-600">{maskPhone(user.phone)}</p>
               </div>
             </div>
 

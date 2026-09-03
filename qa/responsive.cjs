@@ -103,6 +103,32 @@ const problems = [];
     await ctx.close();
   }
 
+  /* Product purchase CTAs must never wrap/clip their label at any width.
+     The two primary buttons are full-width and stacked; the wishlist control
+     becomes a fixed icon once there is room. `whitespace-nowrap` + the stacked
+     layout guarantee a single line per label. */
+  for (const width of WIDTHS) {
+    const ctx = await browser.newContext({
+      viewport: { width, height: 900 },
+      locale: "fa-IR",
+    });
+    const page = await ctx.newPage();
+    await page.goto(BASE + "/product/ethiopia-yirgacheffe", { waitUntil: "networkidle" });
+    const add = page.getByRole("button", { name: /افزودن به سبد خرید/ }).first();
+    const quick = page.getByRole("button", { name: /خرید سریع/ }).first();
+    for (const [label, btn] of [["افزودن به سبد خرید", add], ["خرید سریع", quick]]) {
+      const h = await btn.evaluate((el) => ({
+        h: el.getBoundingClientRect().height,
+        line: getComputedStyle(el).lineHeight,
+        text: el.innerText.trim(),
+      })).catch(() => null);
+      // h-13 = 52px; if the label wrapped the pill would grow past ~56px.
+      if (!h) problems.push(`${width}px product CTA "${label}" not found`);
+      else if (h.h > 58) problems.push(`${width}px product CTA "${label}" wrapped (${Math.round(h.h)}px)`);
+    }
+    await ctx.close();
+  }
+
   await browser.close();
   if (problems.length) {
     console.log(problems.join("\n"));

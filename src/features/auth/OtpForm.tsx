@@ -129,7 +129,10 @@ export function OtpForm({ next }: { next?: string }) {
       <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-cream-50 px-4 py-3">
         <p className="text-sm text-espresso-900">
           کد به شماره{" "}
-          <span className="latin font-bold" data-testid="masked-phone">
+          {/* Persian digits (maskPhone) — keep the brand font, NOT the Latin
+              serif, which lacks Persian digit glyphs and renders a mismatched
+              fallback font. */}
+          <span className="font-bold" data-testid="masked-phone">
             {pendingPhone ? maskPhone(pendingPhone) : ""}
           </span>{" "}
           ارسال شد.

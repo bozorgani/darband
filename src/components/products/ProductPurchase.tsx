@@ -172,28 +172,36 @@ export function ProductPurchase({ product }: { product: Product }) {
         </div>
       </div>
 
-      {/* CTAs */}
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-        <Button size="lg" onClick={() => handleAdd()} disabled={!product.inStock} className="flex-1">
-          <BagIcon className="size-4" />
-          افزودن به سبد خرید
-        </Button>
-        <Button
-          size="lg"
-          variant="secondary"
-          onClick={() => handleAdd(true)}
-          disabled={!product.inStock}
-          className="flex-1"
-        >
-          خرید سریع
-        </Button>
+      {/* CTAs.
+          The two primary CTAs are full-width and stacked on every breakpoint so
+          their labels never wrap or get clipped. On the product page the purchase
+          column drops to ~450px at `lg` (two-column grid), which is too narrow to
+          fit two side-by-side buttons + the wishlist control, so only the wishlist
+          sits inline (as a fixed icon) once there is room. `whitespace-nowrap`
+          guarantees a single line per label. */}
+      <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-stretch">
+        <div className="flex grow flex-col gap-3">
+          <Button size="lg" onClick={() => handleAdd()} disabled={!product.inStock} className="whitespace-nowrap">
+            <BagIcon className="size-4" />
+            افزودن به سبد خرید
+          </Button>
+          <Button
+            size="lg"
+            variant="secondary"
+            onClick={() => handleAdd(true)}
+            disabled={!product.inStock}
+            className="whitespace-nowrap"
+          >
+            خرید سریع
+          </Button>
+        </div>
         <button
           type="button"
           onClick={() => toggleWishlist(product)}
           aria-pressed={wished}
           aria-label={wished ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"}
           className={cn(
-            "flex h-13 items-center justify-center gap-2 rounded-full border px-5 text-sm font-semibold transition sm:w-13 sm:px-0",
+            "flex h-13 shrink-0 items-center justify-center gap-2 rounded-full border px-5 text-sm font-semibold transition sm:w-13 sm:px-0",
             wished
               ? "border-accent-600 bg-accent-600 text-white"
               : "border-espresso-900/18 text-espresso-900 hover:border-espresso-900",
