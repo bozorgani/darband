@@ -128,15 +128,15 @@ export function FreeShippingMeter({
   const progress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
   return (
     <div className={cn("rounded-2xl bg-cream-100/70 p-4", className)}>
-      <div className="flex items-center gap-2 text-xs text-espresso-800">
+      <div className="flex flex-wrap items-center gap-2 text-xs text-espresso-800">
         <TruckIcon className="size-4 shrink-0 text-accent-600" />
         {remaining > 0 ? (
-          <p>
+          <p className="min-w-0">
             <span className="font-semibold">{formatNumber(remaining)} تومان</span> تا ارسال رایگان
             باقی مانده است.
           </p>
         ) : (
-          <p className="font-semibold text-success">ارسال سفارش شما رایگان است 🎉</p>
+          <p className="min-w-0 font-semibold text-success">ارسال سفارش شما رایگان است 🎉</p>
         )}
       </div>
       <div

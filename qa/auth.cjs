@@ -74,10 +74,12 @@ const rendersLtr = async (page, selector) =>
     page.url().split("localhost:3000")[1],
   );
 
-  /* 2. Invalid Iranian numbers are rejected */
+  /* 2. Invalid Iranian numbers are rejected.
+        (A 12-digit local number is no longer listed here: the field now caps a
+        local `09…` at 11 digits instead of holding an over-long value, which is
+        asserted separately by the "caps at 11 digits" check.) */
   const invalids = [
     "0912123456", // too short
-    "091212345678", // too long
     "02112345678", // landline prefix
     "abcdefghij", // letters only
     "+14155552671", // non-Iranian number
@@ -130,6 +132,25 @@ const rendersLtr = async (page, selector) =>
     "All accepted phone formats produce one canonical number",
     uniqueMasks.length === 1 && uniqueMasks[0].includes("۰۹۱۲") && uniqueMasks[0].includes("۴۵۶۷"),
     uniqueMasks.join(" | "),
+  );
+
+  /* 2b. The field must never grow past a real number: a local `09…` is capped
+        at 11 digits, while an incomplete `+98…` international prefix may stay
+        up to 14 chars until it parses. */
+  await page.goto(`${BASE}/auth`, { waitUntil: "networkidle" });
+  await page.getByTestId("phone-input").fill("0912123456789");
+  const tooLong = await page.getByTestId("phone-input").inputValue();
+  check(
+    "Local phone input caps at 11 digits",
+    tooLong.length === 11 && tooLong === "09121234567",
+    `${tooLong} (${tooLong.length})`,
+  );
+  await page.getByTestId("phone-input").fill("+9891212345678");
+  const intlInProgress = await page.getByTestId("phone-input").inputValue();
+  check(
+    "International prefix may stay up to 14 chars until it parses",
+    intlInProgress.length === 14 && intlInProgress.startsWith("+98"),
+    `${intlInProgress} (${intlInProgress.length})`,
   );
 
   /* 2c. The field shows the local form and never a decorative +98 prefix.

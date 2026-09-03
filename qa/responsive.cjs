@@ -103,6 +103,36 @@ const problems = [];
     await ctx.close();
   }
 
+  /* Cart page with populated items must never overflow horizontally at any
+     width. The summary/items grid requires `min-w-0` on its columns and the
+     discount row to wrap/shrink, otherwise an unbreakable child forces the
+     whole page to ~67px wider than a 320px viewport. */
+  for (const width of WIDTHS) {
+    const ctx = await browser.newContext({
+      viewport: { width, height: 900 },
+      locale: "fa-IR",
+      reducedMotion: "reduce",
+    });
+    const page = await ctx.newPage();
+    await page.goto(BASE, { waitUntil: "domcontentloaded" });
+    await page.evaluate(() => {
+      localStorage.setItem("darband.cart.v1", JSON.stringify([
+        { key: "e", productId: "ethiopia-yirgacheffe", slug: "ethiopia-yirgacheffe",
+          title: "اتیوپی یرگاچف", image: "/images/products/ethiopia-1.jpg", unitPrice: 485000,
+          quantity: 2, options: [{ label: "نوع", value: "دانه کامل" }, { label: "وزن", value: "۲۵۰ گرم" }] },
+        { key: "g", productId: "m-1", slug: "manual-grinder", title: "آسیاب دستی حرفه‌ای",
+          image: "/images/products/grinder-1.jpg", unitPrice: 2400000, quantity: 1, options: [] },
+      ]));
+    });
+    await page.goto(BASE + "/cart", { waitUntil: "networkidle" });
+    await page.waitForTimeout(700);
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    if (overflow > 0) problems.push(`${width}px /cart (with items): horizontal overflow ${overflow}px`);
+    await ctx.close();
+  }
+
   /* Product purchase CTAs must never wrap/clip their label at any width.
      The two primary buttons are full-width and stacked; the wishlist control
      becomes a fixed icon once there is room. `whitespace-nowrap` + the stacked

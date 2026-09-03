@@ -59,13 +59,23 @@ export function toLocalPhone(input: string): string {
 
 /**
  * Keeps a phone field usable while typing (`09…`) without breaking a pasted
- * international number: as soon as the value parses, it is rewritten to the
- * local `09xxxxxxxxx` form.
+ * international number, and never lets it grow beyond a real number:
+ *
+ *  - If the value already parses, rewrite it to the local `09xxxxxxxxx` form.
+ *  - If it is an incomplete international prefix (`+98…`/`00…`), keep up to 14
+ *    chars so the user can finish typing/pasting it.
+ *  - Otherwise (a plain local number in progress) cap it at 11 digits — the
+ *    national form is exactly `09` + 9 digits. This stops the input from
+ *    swallowing a 12th/13th digit (previously it allowed `slice(0,14)`).
  */
 export function sanitizePhoneInput(raw: string): string {
-  const cleaned = toAsciiDigits(raw).replace(/[^\d+]/g, "").slice(0, 14);
+  const cleaned = toAsciiDigits(raw).replace(/[^\d+]/g, "");
   const national = parseIranMobile(cleaned);
-  return national ? `0${national}` : cleaned;
+  if (national) return `0${national}`;
+  if (cleaned.startsWith("+") || cleaned.startsWith("00")) {
+    return cleaned.slice(0, 14);
+  }
+  return cleaned.slice(0, 11);
 }
 
 /** `+989121234567` → `۰۹۱۲ ۱۲۳ ۴۵۶۷` (display only). */

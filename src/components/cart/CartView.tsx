@@ -80,9 +80,11 @@ export function CartView() {
   return (
     <div className="container-page py-10 lg:py-12">
       <div className="grid gap-10 lg:grid-cols-[1.6fr_1fr] lg:gap-14">
-        {/* Items */}
-        <section aria-label="کالاهای سبد خرید">
-          <div className="mb-5 flex items-center justify-between">
+        {/* Items — `min-w-0` lets the grid column shrink below its content on
+            narrow phones; without it an unbreakable child forces horizontal
+            overflow at ≤380px. */}
+        <section aria-label="کالاهای سبد خرید" className="min-w-0">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-2">
             <h2 className="text-lg font-bold text-espresso-900">
               {toPersianDigits(itemCount)} کالا در سبد
             </h2>
@@ -117,7 +119,7 @@ export function CartView() {
         </section>
 
         {/* Summary */}
-        <aside className="lg:sticky lg:top-28 lg:self-start">
+        <aside className="min-w-0 lg:sticky lg:top-28 lg:self-start">
           <div className="rounded-3xl border border-beige-300/70 bg-cream-50/60 p-6">
             <h2 className="text-base font-bold text-espresso-900">خلاصه سفارش</h2>
 
@@ -132,14 +134,14 @@ export function CartView() {
               <label htmlFor="discount" className="mb-1.5 block text-xs font-semibold text-espresso-800">
                 کد تخفیف
               </label>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <input
                   id="discount"
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
                   placeholder="مثلاً GHAHVINO10"
                   dir="ltr"
-                  className="h-11 flex-1 rounded-full border border-espresso-900/15 bg-white/80 px-4 text-sm text-espresso-900 placeholder:text-ash-400 focus:border-accent-600 focus:outline-none"
+                  className="h-11 min-w-0 flex-1 rounded-full border border-espresso-900/15 bg-white/80 px-4 text-sm text-espresso-900 placeholder:text-ash-400 focus:border-accent-600 focus:outline-none"
                 />
                 <Button type="submit" variant="outline">
                   اعمال
