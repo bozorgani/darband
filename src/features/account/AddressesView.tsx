@@ -93,9 +93,9 @@ export function AddressesView() {
                 {toPersianDigits(address.plaque)}
                 {address.unit && `، واحد ${toPersianDigits(address.unit)}`}
                 <br />
-                کدپستی: <span>{toPersianDigits(address.postalCode)}</span>
+                کدپستی: <span dir="ltr">{toPersianDigits(address.postalCode)}</span>
                 <br />
-                تلفن: <span>{formatPhoneForDisplay(address.phone)}</span>
+                تلفن: <span dir="ltr">{formatPhoneForDisplay(address.phone)}</span>
                 {address.note && (
                   <>
                     <br />

@@ -20,6 +20,34 @@ const typeOtp = async (page, code) => {
   }
 };
 
+/** True when the element's text paints left-to-right (first char x < last x).
+ *  Phone numbers are LTR content; inside RTL text they must be isolated with
+ *  `dir="ltr"` or the bidi algorithm reverses the digit groups. */
+const rendersLtr = async (page, selector) =>
+  page.evaluate((sel) => {
+    const el = document.querySelector(sel);
+    if (!el) return null;
+    const t = el.textContent || "";
+    const x = (ch) => {
+      const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      let n;
+      while ((n = w.nextNode())) {
+        const i = n.textContent.indexOf(ch);
+        if (i >= 0) {
+          const r = document.createRange();
+          r.setStart(n, i);
+          r.setEnd(n, i + 1);
+          return r.getBoundingClientRect().left;
+        }
+      }
+      return null;
+    };
+    const f = x(t[0]);
+    const l = x(t[t.length - 1]);
+    if (f === null || l === null) return null;
+    return f < l;
+  }, selector);
+
 (async () => {
   const browser = await chromium.launch();
 
@@ -120,6 +148,11 @@ const typeOtp = async (page, code) => {
   await page.waitForURL("**/auth/verify**", { timeout: 8000 });
   const masked = await page.getByTestId("masked-phone").innerText();
   check("Pasted +98 phone → OTP screen with masked number", masked.includes("۰۹۱۲"), masked);
+  check(
+    "OTP masked phone renders left-to-right (not reversed by RTL bidi)",
+    (await rendersLtr(page, '[data-testid="masked-phone"]')) === true,
+    masked,
+  );
 
   /* 4. Wrong code → error, inputs cleared */
   await typeOtp(page, "11111");
@@ -233,6 +266,14 @@ const typeOtp = async (page, code) => {
   await page.getByTestId("profile-first-name").fill("سارا");
   await page.getByTestId("save-profile").click();
   await page.waitForTimeout(700);
+
+  /* The verified number must read left-to-right, not reversed by RTL bidi */
+  const profilePhoneLtr = await rendersLtr(page, '[data-testid="profile-phone"]');
+  check(
+    "Profile verified phone renders left-to-right",
+    profilePhoneLtr === true,
+    String(profilePhoneLtr),
+  );
 
   /* 14. Addresses: add → edit → delete */
   await page.goto(`${BASE}/account/addresses`, { waitUntil: "networkidle" });

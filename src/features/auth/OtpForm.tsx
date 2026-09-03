@@ -129,10 +129,11 @@ export function OtpForm({ next }: { next?: string }) {
       <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-cream-50 px-4 py-3">
         <p className="text-sm text-espresso-900">
           کد به شماره{" "}
-          {/* Persian digits (maskPhone) — keep the brand font, NOT the Latin
-              serif, which lacks Persian digit glyphs and renders a mismatched
-              fallback font. */}
-          <span className="font-bold" data-testid="masked-phone">
+          {/* The number is LTR content even inside RTL text: an isolated
+              `dir="ltr"` keeps the digit groups in their natural left-to-right
+              order (without it, RTL bidi reverses them). The brand font is kept
+              (the Persian digits have Vazir glyphs, not the Latin serif). */}
+          <span dir="ltr" className="font-bold" data-testid="masked-phone">
             {pendingPhone ? maskPhone(pendingPhone) : ""}
           </span>{" "}
           ارسال شد.

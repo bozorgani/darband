@@ -74,7 +74,7 @@ export function AccountShell({ children }: { children: ReactNode }) {
                   <p className="truncate text-sm font-bold">
                     {fullName(user) || "کاربر قهوینو"}
                   </p>
-                  <p className="mt-0.5 text-[0.7rem] text-cream-100/70">
+                  <p dir="ltr" className="mt-0.5 text-[0.7rem] text-cream-100/70">
                     {maskPhone(user.phone)}
                   </p>
                 </div>
@@ -178,7 +178,7 @@ function MobileAccountNav({ onLogout, unread }: { onLogout: () => void; unread: 
           <p className="truncate text-sm font-bold">
             {user && (fullName(user) || "کاربر قهوینو")}
           </p>
-          <p className="mt-0.5 text-[0.7rem] text-cream-100/70">
+          <p dir="ltr" className="mt-0.5 text-[0.7rem] text-cream-100/70">
             {user ? maskPhone(user.phone) : ""}
           </p>
         </div>
