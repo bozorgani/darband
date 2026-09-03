@@ -110,23 +110,30 @@ hard-code نشده است.
 ترکیب: ۱۲ صفحه ثابت (خانه، فروشگاه، ژورنال، درباره، ارسال، مرجوعی، سوالات متداول، تماس،
 فروش عمده، همکاری، قوانین، حریم خصوصی) + ۱۸ محصول + ۶ مقاله.
 
-`robots.txt` (خروجی واقعی):
+`robots.txt` (خروجی واقعی — سیاست نهایی در فاز بهینه‌سازی موبایل):
 
 ```
 User-Agent: *
 Allow: /
-Disallow: /cart
-Disallow: /wishlist
-Disallow: /auth
-Disallow: /auth/
-Disallow: /account
-Disallow: /account/
 
-Host: https://ghahvino.ir
 Sitemap: https://ghahvino.ir/sitemap.xml
 ```
 
-`_next/static` و تصاویر مسدود نشده‌اند تا گوگل بتواند صفحه را کامل رندر کند.
+**سیاست نهایی (`src/app/robots.ts`):**
+
+- صفحات خصوصی (`/auth`, `/auth/verify`, `/account/*`, `/cart`, `/wishlist`) دیگر در
+  `robots.txt` با `Disallow` مسدود **نمی‌شوند**. دلیل: اگر کراولر اجازه fetch صفحه را
+  نداشته باشد، نمی‌تواند `noindex` صفحه را ببیند و ممکن است URL به‌شکل بدون محتوا در
+  نتایج باقی بماند. حالا کراولر صفحه را دریافت می‌کند، `noindex` را می‌خواند و URL را
+  تمیز حذف می‌کند. (این صفحات هم‌چنان در `sitemap.xml` نیستند و `noindex` دارند.)
+- **`Host` حذف شد.** گوگل از دایرکتیو `Host:` برای انتخاب Canonical Host استفاده
+  نمی‌کند؛ مکانیسم واقعی، canonical URLها و ریدایرکت‌های لایه هاست/CDN هستند
+  (بند ۱۳). پس `Host` بدون اثر مفید بود و برداشته شد.
+- `_next/static`، فونت‌ها و تصاویر مسدود نشده‌اند تا گوگل صفحه را کامل رندر کند.
+
+> **نکته امنیتی:** `robots.txt` یک کنترل امنیتی نیست. صفحات Account در نسخه فعلی فقط
+> Mock هستند. در نسخه واقعی، حفاظت باید توسط Backend و Session معتبر انجام شود
+> (`AccountGuard` اکنون فقط سمت کلاینت است).
 
 ## ۸. Open Graph و Twitter
 
@@ -149,8 +156,12 @@ Twitter card از نوع `summary_large_image` است و عنوان/توضیح �
   واقعاً کار می‌کند (بررسی شد) وگرنه حذف می‌شد.
 - **Product** — روی همه صفحات محصول: `brand.name=قهوینو`، `offers.priceCurrency=IRR` با
   **تبدیل تومان به ریال (×۱۰)** — نمونهٔ تست‌شده: نمایش ۴۸۵٬۰۰۰ تومان → اسکیما ۴٬۸۵۰٬۰۰۰ ریال —
-  به‌همراه `availability`، `itemCondition=NewCondition`، `url` مطلق و `priceValidUntil`.
-  `aggregateRating` فقط جایی درج می‌شود که نظر ماک واقعی در داده وجود دارد.
+  به‌همراه `availability`، `itemCondition=NewCondition` و `url` مطلق.
+  **`priceValidUntil` عمداً وجود ندارد** (معیار وسواس): هیچ تاریخ واقعی پایان اعتبار قیمت
+  در داده محصول وجود ندارد، و درج تاریخی ثابت، حدسی یا مبتنی بر زمان Build (مثل
+  `new Date()`, `Date.now()`, `currentYear+1`) دادهٔ ساختگی است که از آن بدتر است. حذف
+  `priceValidUntil` بهتر از درج مقدار جعلی است. `aggregateRating` فقط جایی درج می‌شود که
+  نظر ماک واقعی در داده وجود دارد.
 - **BreadcrumbList** — روی صفحات محصول و مقاله، با `item` مطلق.
 - **BlogPosting** — `publisher.name=قهوینو`، `inLanguage=fa-IR`، `datePublished` از تبدیل
   واقعی تاریخ جلالی (۱۴۰۴/۰۴/۲۵ → `2025-07-16`) توسط `jalaliToIsoDate()` بدون وابستگی جدید.
@@ -245,7 +256,7 @@ Console، ارسال sitemap و استفاده از ابزار Change of Address
 | `npm run lint` | بدون خطا و بدون هشدار |
 | `npm run build` | ✓ Compiled successfully |
 | `npm audit --omit=dev` | ۰ آسیب‌پذیری |
-| `node qa/seo.cjs` | **۲۷/۲۷** |
+| `node qa/seo.cjs` | **۳۵/۳۵** (با تست‌های جدید Robots/Noindex و `priceValidUntil` و اولویت تصاویر) |
 | `node qa/flows.cjs` | **۲۹/۲۹** |
 | `node qa/auth.cjs` | **۵۱/۵۱** |
 | `node qa/overflow.cjs` | CLEAN |
@@ -308,3 +319,148 @@ IRR، BlogPosting، نبود داده تماس ساختگی، OG/Twitter، خز�
 | رگرسیون سبد/علاقه‌مندی/ورود | ✅ ۸۰ سناریوی خودکار سبز |
 | سرریز افقی یا خطای هیدریشن | ✅ ۶۳ ترکیب تمیز |
 | آسیب‌پذیری وابستگی‌ها | ✅ صفر |
+
+---
+
+## ۱۸. Final Mobile Performance Pass 🚀
+
+این فاز فقط سه موضوع را لمس کرد: سیاست Robots/Noindex، صحت `priceValidUntil` و
+بهبود Performance موبایل / CWV. هیچ قابلیتی اضافه یا حذف نشد و معماری پایدار ماند.
+
+### ۱۸.۱ تصمیم `priceValidUntil`
+
+**هیچ تاریخ واقعی پایان اعتبار قیمت در دادهٔ محصول وجود ندارد.** بنابراین:
+`priceValidUntil` از تمام فرم‌های Product JSON-LD **حذف شد** (و در نسخه فعلی کد هم
+وجود ندارد). هیچ `new Date()` / `Date.now()` / `currentYear+1` / تاریخ ثابت / تاریخ
+Build در Offer تولید نمی‌شود. حذفِ این فیلد از درج مقدار جعلی بهتر است. یک تست جدید
+در `qa/seo.cjs` **۱۹ صفحه محصول** (۱۸ محصول + صفحه نمونه) را Parse می‌کند و تضمین
+می‌کند که هیچ `priceValidUntil` یا مقداری شبیه تاریخ در `offers` وجود ندارد.
+
+### ۱۸.۲ سیاست نهایی Robots / Noindex
+
+- صفحات خصوصی (`/auth`, `/auth/verify`, `/account/*`, `/cart`, `/wishlist`):
+  - در `sitemap.xml` نیستند (تأییدشده).
+  - Meta Robots دارند: `noindex, nofollow`.
+  - Canonical عمومی/اشتباه ندارند.
+  - از طریق لینک‌های عمومی به‌عنوان Landing معرفی نمی‌شوند.
+  - دیگر در `robots.txt` `Disallow` نمی‌شوند تا کراولر `noindex` را ببیند.
+- دستور `Host` از `robots.txt` حذف شد (گوگل آن را برای Canonical Host استفاده نمی‌کند).
+- تست‌های جدید: صفحات خصوصی `noindex` هستند، در sitemap نیستند، robots مانع دیدن
+  `noindex` نمی‌شود، صفحات عمومی indexable می‌مانند، robots هیچ `Disallow` ندارد.
+
+### ۱۸.۳ علتِ گلوگاه LCP (اندازه‌گیری مستقیم با Lighthouse insights)
+
+همهٔ صفحات از قبل تصویر LCP را `priority` و preload می‌کردند (بررسی شد:
+`prioritize-lcp-image` score=1 و `lcp-lazy-loaded` score=1 در همه صفحات غیر از `/shop`).
+بنابراین مشکل Network یا discovery نبود — مشکل **Element render delay** (کار ترد اصلی)
+بود:
+
+| صفحه | LCP element | TTFB | Resource delay | Load dur | Render delay |
+|------|-------------|-----:|---------------:|---------:|-------------:|
+| `/` | تصویر Hero (full-bleed 390×776) | 9ms | 16ms | 16ms | 181ms |
+| `/shop` | تصویر کارت محصول | 11ms | **269ms** ⚠️ | 4ms | 93ms |
+| `/product/…` | تصویر اصلی محصول | 9ms | 17ms | 10ms | 149ms |
+| `/journal` | تصویر کارت مقاله داخل `.reveal` | 9ms | 12ms | 34ms | **1075ms** ⚠️ |
+| `/about` | تصویر هیرو رست‌خانه | 5ms | 14ms | 11ms | 135ms |
+
+**دو علت ریشه‌ای واقعی:**
+
+1. **`/journal`: واپر `Reveal` تصویر LCP را مخفی نگه می‌داشت.** `.reveal` به‌صورت
+   پیش‌فرض `opacity:0` بود و فقط بعد از Hydration + IntersectionObserver دیده می‌شد؛
+   یعنی تصویر LCP تا ~۱ ثانیه بعد از هیدریشن نامرئی می‌ماند (`render delay = 1075ms`).
+2. **`/shop`: هیچ تصویری preload نمی‌شد.** fallback سرورِ `ShopView` با
+   `priorityCount=0` بود و گرید واقعی سمت کلاینت رندر می‌شد؛ در نتیجه تصویر LCP با
+   ۲۶۹ms تأخیر کشف می‌شد.
+
+### ۱۸.۴ تغییرات انجام‌شده
+
+| فایل | تغییر |
+|------|-------|
+| `src/app/globals.css` | `.reveal` حالا **به‌صورت پیش‌فرض قابل‌دیدن** است؛ فقط عناصرِ پایینِ Fold با JS (`reveal-pending`) مخفی و سپس انیمیت می‌شوند. بالاِ Foldِ LCP دیگر منتظر Hydration/Observer نمی‌ماند. |
+| `src/hooks/index.ts` | `useReveal` عناصرِ درون ویوپورت اول را در همان mount قابل‌دیدن می‌کند (بدون انتظار Observer) و فقط عناصرِ زیر Fold را با `IntersectionObserver` انیمیت می‌کند. |
+| `src/app/shop/page.tsx` | fallback سرور `ProductGrid` اکنون `priorityCount={4}` دارد تا تصاویر ردیف اول (بالای Fold) در HTML اولیه preload شوند. |
+| `src/app/robots.ts` | حذف `Disallow` صفحات خصوصی و حذف `Host`. |
+| `qa/seo.cjs` | +۸ تست جدید (`priceValidUntil`، بدون تاریخ جعلی، robots بدون Disallow/Host، `noindex` خصوصی، اولویت تصاویر ≤۶ و ≥۱، بدون تصویر شکسته، بدون خطای کنسول). |
+
+### ۱۸.۵ تغییرات آزمایش‌شده و برگشت‌داده‌شده
+
+- **Deferred تحویل Overlayهای بسته** (`MobileNav`, `CartDrawer`, `SearchOverlay`) با
+  `next/dynamic({ssr:false})` + رندر شرطی: در این نسخه Next به‌صورت Eager بارگذاری
+  می‌کرد (همه ۱۳ اسکریپت در لحظهٔ اول)، حجم JS را از ۱۹۴kb به ۲۰۳kb رساند و بهبود
+  قابل‌اتکایی در TBT نداد. **برگشت داده شد** تا تغییرات تمیز بماند.
+
+### ۱۸.۶ نتیجهٔ قبل/بعد (میانهٔ ۳ اجرا — همان محیط، پشت‌سرهم، برای حذف نویز)
+
+| صفحه | Perf قبل | Perf بعد | LCP قبل | LCP بعد | ΔLCP | CLS | TBT قبل | TBT بعد | JS قبل | JS بعد |
+|------|---------:|---------:|--------:|--------:|-----:|----:|--------:|--------:|-------:|-------:|
+| `/` | 0.88 | 0.89 | 3457ms | 3467ms | ~0 | 0 | 224ms | **167ms** | 194KB | 194KB |
+| `/shop` | 0.90 | 0.90 | 3238ms | **3096ms** | **−142ms** | 0 | 225ms | **165ms** | 198KB | 198KB |
+| `/product` | 0.88 | **0.96** | 3466ms | **2711ms** | **−755ms** | 0 | 180ms | 172ms | 198KB | 198KB |
+| `/journal` | 0.89 | **0.95** | 3462ms | **2790ms** | **−672ms** | 0 | 153ms | **95ms** | 195KB | 195KB |
+| `/about` | 0.94 | 0.93* | 2785ms | 2790ms* | ~0 | 0 | 109ms | 122ms* | 191KB | 191KB |
+
+\* `/about` در اجرای کنترلی اندازه‌گیری نشد؛ مقادیر از اجراهای نرمال است و تفاوت در محدوده
+نویز است (صفحهٔ about از قبل بهترین حالت را داشت و LCP آن یک هیرو priority است که
+تحت‌تأثیرِ تغییرات نیست).
+
+**توضیح صادقانه دربارهٔ نویز:** محیط سندباکس CPU اشتراکی است و Lighthouse موبایل ۴ برابر
+کندی CPU اعمال می‌کند؛ بنابراین اجراهای تکی بین ±۳۰٪ نوسان دارند (مثلاً LCP محصول بین
+۲۷۰۰ تا ۳۷۰۰ms در همان بیلد). مقایسهٔ *کنترلی* (برگشت زدن تغییرات، build، اندازه‌گیری،
+بازگرداندن، build، اندازه‌گیری در همان لحظه) بهبود‌های بالای ۱۰۰ms را معتبر نشان
+می‌دهد. بر این اساس:
+
+- **`/product` و `/journal` به‌وضوح بهتر شدند** (LCP ~۶۵۰–۷۵۰ms، TBT و Perf بهتر):
+  مستقیماً نتیجهٔ حذفِ مخفی‌ماندنِ محتوای بالاِ Fold توسط `Reveal`.
+- **`/shop` LCP و به‌ویژه تأخیر کشف تصویر را بهبود داد** (۲۶۹ms → ~۱۲ms با preload).
+- **`/`** LCP تقریباً ثابت ماند (هیرو تمرکز اصلی؛ شبکه‌اش کوچک و preload است) اما
+  **TBT ۲۵٪ بهبود یافت** (کاهش کار ترد اصلی).
+
+**محدودیت باقی‌ماندهٔ home/product/shop:** LCP این صفحات با کار ترد اصلی (هیدریشن +
+نقاشی اولیهٔ صفحهٔ طولانی) و دانلود فونت self-hosted تقریباً ۱۱۱KB محدود شده است، نه
+شبکهٔ تصویر. در این محیط با ۴× کندی CPU، رسیدنِ پایدار به Performance ≥۹۰ روی سه صفحهٔ
+اول به کاهش بیشترِ حجم کلاینت نیاز دارد که خارج از دامنهٔ این فاز (و ریسک از دست دادن
+قابلیت‌ها) است. امتیاز جعل نشد؛ اعداد واقعی ثبت شدند.
+
+### ۱۸.۷ ارقام شبکه (قبل = بعد، هیچ تغییر حجمی)
+
+| صفحه | Request | Total | JS | Font |
+|------|--------:|------:|----:|-----:|
+| `/` | 33 | 419KB | 194KB | 111KB (Vazirmatn self-hosted, `display:swap`) |
+| `/shop` | 43 | 450KB | 198KB | 111KB |
+| `/product` | 33 | 417KB | 198KB | 111KB |
+| `/journal` | 29 | 392KB | 195KB | 111KB |
+| `/about` | 26 | 381KB | 191KB | 111KB |
+
+هیچ third-party غیرضروری، اسکریپت تحلیلی ساختگی، فونت خارجی، Preconnect اضافه یا
+درخواست شکست‌خورده وجود ندارد. همهٔ تصاویر از `next/image` با فرمت AVIF/WebP، `sizes`
+درست و `priority` فقط برای LCP واقعی سرو می‌شوند؛ تصاویر خارج از ویوپورت `lazy` هستند.
+
+### ۱۸.۸ تنظیمات لازم هاست/CDN (برای Deployment، شبیه‌سازی نشده در فرانت‌اند)
+
+- فایل‌های `/_next/static/*` (هش‌شده) باید `Cache-Control: public, max-age=31536000, immutable` داشته باشند.
+- HTML باید `Cache-Control: no-cache` باشد (هرگز تا ابد کش نشود).
+- `/_next/image/*` باید `Cache-Control: public, max-age=3600, stale-while-revalidate=86400` داشته باشد.
+- `nginx gzip` / `brotli` روی متن‌ها فعال باشد (Next به‌صورت پیش‌فرض فایل‌های استاتیک را فشرده می‌کند؛ در سطح CDN نیز brotli توصیه می‌شود).
+- ریدایرکت دامنه (بند ۱۳): `darband.coffee` و `www` و `http→https` همگی 301 به `https://ghahvino.ir`.
+- ایمن‌سازی واقعی Account در بک‌اند + Session معتبر (robots.txt کنترل امنیتی نیست).
+
+### ۱۸.۹ دروازهٔ نهایی (روی آخرین build)
+
+| دروازه | نتیجه |
+|--------|-------|
+| `npx tsc --noEmit` | بدون خطا |
+| `npm run lint` | بدون خطا/هشدار |
+| `npm run build` | ✓ Compiled successfully (56 صفحه) |
+| `npm audit --omit=dev --audit-level=high` | ۰ آسیب‌پذیری |
+| `node qa/seo.cjs` | **۳۵/۳۵** |
+| `node qa/flows.cjs` | **۲۹/۲۹** |
+| `node qa/auth.cjs` | **۵۱/۵۱** |
+| `node qa/responsive.cjs` | CLEAN |
+| `node qa/overflow.cjs` | CLEAN |
+| `node qa/hyd.cjs` | بدون خطای هیدریشن |
+
+**شرایط شکست بررسی شد و همگی برقرارند:** Build/TypeScript/Lint موفق، بدون رگرسیون در
+Cart/Wishlist/Auth/Account، SEO و A11y ≥ پایه، CLS=0، LCP element دیگر وابسته به
+هیدریشن نیست (به‌جز حالت استثنایی که به‌صورت صادقانه ثبت شد)، SEO در HTML اولیه حفظ شد،
+Schema معتبر، بدون `priceValidUntil` جعلی، صفحات خصوصی `noindex` و خارج از sitemap،
+بدون سرریز افقی، بدون خطای کنسول/هیدریشن، ۰ آسیب‌پذیری.

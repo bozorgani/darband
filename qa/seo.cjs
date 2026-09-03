@@ -141,11 +141,27 @@ const meta = (page, selector, attr = "content") =>
     robotsTxt.includes(`Sitemap: ${CANONICAL_HOST}/sitemap.xml`) && !robotsTxt.includes("darband"),
     robotsTxt.split("\n").filter((l) => l.startsWith("Sitemap")).join(""),
   );
+  /* Final robots policy: private pages stay noindex via their meta, but the
+     crawler must be ALLOWED to fetch them so it can actually read `noindex`.
+     They are also never blocked (`Disallow`) here, and no `Host:` directive is
+     emitted because Google does not use it to pick a canonical host. */
+  const disallowed = (robotsTxt.match(/^Disallow:\s*(.+)$/gm) || []).map((l) => l.trim());
+  const privateBlocked = disallowed.filter((l) =>
+    /\/(cart|wishlist|auth|account)/.test(l),
+  );
   check(
-    "robots.txt keeps private routes out and assets in",
-    /Disallow: \/account/.test(robotsTxt) &&
-      /Disallow: \/auth/.test(robotsTxt) &&
-      !/Disallow: \/_next/.test(robotsTxt),
+    "robots.txt does NOT disallow private pages (so crawlers can read their noindex)",
+    disallowed.length === 0 && privateBlocked.length === 0,
+    disallowed.join(" | ") || "(no Disallow rules)",
+  );
+  check(
+    "robots.txt leaves CSS/JS/fonts/images crawlable (no _next block)",
+    !robotsTxt.includes("Disallow") && !/Disallow:\s*\/_next/.test(robotsTxt),
+  );
+  check(
+    "robots.txt has no Host directive (Google ignores it for canonical host)",
+    !/^Host:/m.test(robotsTxt),
+    (robotsTxt.match(/^Host:\s*(.+)$/m) || [])[1] || "(none)",
   );
 
   /* ------------------------------------------------------------- 13, 14, 15 */
@@ -176,6 +192,42 @@ const meta = (page, selector, attr = "content") =>
   );
   const productCrumbs = productBlocks.find((b) => b["@type"] === "BreadcrumbList");
   check("Product page has a BreadcrumbList", Boolean(productCrumbs) && productCrumbs.itemListElement.length >= 3);
+
+  /* ---------- Product schema across EVERY product page: no fabricated expiry ---------- */
+  const isoOrNumberLike = /^\d{4}-\d{2}-\d{2}|^\d{9,}|^20\d{2}/;
+  const productUrls = locs.filter((u) => /\/product\//.test(u));
+  const badSchema = [];
+  const badDates = [];
+  for (const url of productUrls) {
+    const path = url.replace(CANONICAL_HOST, "") || "/";
+    await page.goto(BASE + path, { waitUntil: "networkidle" });
+    const blocks = (
+      await page.locator('script[type="application/ld+json"]').allTextContents()
+    ).map((t) => JSON.parse(t));
+    const p = blocks.find((b) => b["@type"] === "Product");
+    if (!p || !p.offers) {
+      badSchema.push(`${path} → missing Product/offers`);
+      continue;
+    }
+    if ("priceValidUntil" in p.offers) badSchema.push(`${path} → priceValidUntil="${p.offers.priceValidUntil}"`);
+    if (p.offers.priceCurrency !== "IRR" || !(Number(p.offers.price) > 0))
+      badSchema.push(`${path} → ${p.offers.priceCurrency} ${p.offers.price}`);
+    /* No build-time / current / fabricated date may leak into the Offer. */
+    for (const [k, v] of Object.entries(p.offers)) {
+      const s = String(v ?? "");
+      if (isoOrNumberLike.test(s) && !["price"].includes(k)) badDates.push(`${path}.${k}=${s}`);
+    }
+  }
+  check(
+    `No fake priceValidUntil anywhere (${productUrls.length} product pages parsed)`,
+    badSchema.length === 0,
+    badSchema.slice(0, 4).join(" | "),
+  );
+  check(
+    "Product offers carry no build-time/current/fabricated date",
+    badDates.length === 0,
+    badDates.slice(0, 4).join(" | "),
+  );
 
   await page.goto(`${BASE}/journal/art-of-pourover`, { waitUntil: "networkidle" });
   const articleBlocks = (
@@ -259,6 +311,45 @@ const meta = (page, selector, attr = "content") =>
     if (/darband|دربند/i.test(head)) legacyMeta.push(route);
   }
   check("No legacy brand in <head> metadata of any public page", legacyMeta.length === 0, legacyMeta.join(", "));
+
+  /* --------- Image priority: only in-viewport LCP assets are prioritized --------- */
+  const imageIssues = [];
+  const preloadCounts = {};
+  for (const route of ["/", "/shop", "/product/ethiopia-yirgacheffe", "/journal", "/about"]) {
+    const res = await ctx.request.get(BASE + route);
+    const html = await res.text();
+    const preloads = (html.match(/<link[^>]+as="image"[^>]*>/g) || []).length;
+    preloadCounts[route] = preloads;
+    if (preloads > 6) imageIssues.push(`${route} → ${preloads} image preloads`);
+  }
+  check("Only intended above-the-fold images are preloaded (≤6 per main page)", imageIssues.length === 0, imageIssues.join(" | "));
+  check("Every main page preloads at least one LCP image", Object.values(preloadCounts).every((n) => n >= 1), JSON.stringify(preloadCounts));
+
+  /* --------- No broken images, no console/page errors on the main pages --------- */
+  const imgErrors = [];
+  const consoleErrors = [];
+  for (const route of ["/", "/shop", "/product/ethiopia-yirgacheffe", "/journal", "/about"]) {
+    const errs = [];
+    page.on("pageerror", (e) => errs.push(`pageerror: ${e.message}`));
+    page.on("console", (m) => {
+      if (m.type() === "error") errs.push(`console: ${m.text()}`);
+    });
+    await page.goto(BASE + route, { waitUntil: "networkidle" });
+    /* A lazy image that hasn't been scrolled into view is legitimately still
+       unloaded (`complete=false`) — that is NOT an error. Only an image that
+       finished loading with no decoded content is broken. */
+    const bad = await page.evaluate(() =>
+      Array.from(document.querySelectorAll("img"))
+        .filter((im) => im.complete && im.naturalWidth === 0)
+        .map((im) => im.getAttribute("src") || "?"),
+    );
+    if (bad.length) imgErrors.push(`${route} → ${bad.length} broken`);
+    if (errs.length) consoleErrors.push(`${route} → ${errs.slice(0, 2).join(" | ")}`);
+    page.removeAllListeners("pageerror");
+    page.removeAllListeners("console");
+  }
+  check("No broken image requests on the main pages", imgErrors.length === 0, imgErrors.join(" | "));
+  check("No new console/page errors on the main pages", consoleErrors.length === 0, consoleErrors.join(" | "));
 
   await browser.close();
   console.log(results.join("\n"));

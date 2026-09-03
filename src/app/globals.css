@@ -176,16 +176,24 @@
   animation: var(--animate-shimmer);
 }
 
-/* Scroll reveal — progressive enhancement, visible by default without JS */
+/* Scroll reveal — progressive enhancement.
+   Content is VISIBLE by default. `useReveal` only hides & animates elements
+   that start BELOW the initial viewport, so an above-the-fold LCP element is
+   never left at opacity 0 waiting for hydration + an IntersectionObserver. */
 .reveal {
-  opacity: 0;
-  transform: translateY(20px);
+  opacity: 1;
+  transform: none;
   transition:
     opacity 0.75s var(--ease-brand),
     transform 0.75s var(--ease-brand);
   transition-delay: var(--reveal-delay, 0ms);
 }
+.reveal.reveal-pending {
+  opacity: 0;
+  transform: translateY(20px);
+}
 .reveal.is-visible,
+.reveal:not(.reveal-pending),
 .no-js .reveal {
   opacity: 1;
   transform: none;

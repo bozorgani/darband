@@ -47,7 +47,14 @@ export default function ShopPage() {
       <Suspense
         fallback={
           <div className="container-page pb-20 pt-8 lg:pt-10">
-            <ProductGrid products={sortProducts(products, "featured").slice(0, 12)} />
+            {/* Server-rendered catalogue: the first (above-the-fold) row is
+                `priority`, so Next preloads those images in the initial HTML.
+                The hydrated grid reuses the same srcs, so nothing double-fetches
+                and the LCP image is discovered early instead of after hydration. */}
+            <ProductGrid
+              products={sortProducts(products, "featured").slice(0, 12)}
+              priorityCount={4}
+            />
           </div>
         }
       >

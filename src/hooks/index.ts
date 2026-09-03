@@ -51,7 +51,11 @@ export function usePersistentState<T>(key: string, initial: T) {
   return [value, setValue, hydrated] as const;
 }
 
-/** Reveal-on-scroll. Adds `.is-visible` once the element enters the viewport. */
+/** Reveal-on-scroll. Adds `.is-visible` once the element enters the viewport.
+ *  Content is visible by default (see `.reveal` in globals.css); only elements
+ *  that start below the fold are hidden (`reveal-pending`) and then animated in,
+ *  so an above-the-fold LCP element is never held at opacity 0 waiting for
+ *  hydration + an IntersectionObserver. */
 export function useReveal<T extends HTMLElement = HTMLDivElement>() {
   const ref = useRef<T | null>(null);
 
@@ -65,10 +69,19 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>() {
       node.classList.add("is-visible");
       return;
     }
+    /* If the element is already (mostly) inside the initial viewport, reveal it
+       immediately and never hide it — this protects the LCP from hydration. */
+    if (node.getBoundingClientRect().top < window.innerHeight * 0.9) {
+      node.classList.add("is-visible");
+      return;
+    }
+    /* Below the fold: hide then animate in on scroll. */
+    node.classList.add("reveal-pending");
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
+            entry.target.classList.remove("reveal-pending");
             entry.target.classList.add("is-visible");
             observer.unobserve(entry.target);
           }
