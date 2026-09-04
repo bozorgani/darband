@@ -169,3 +169,53 @@ node qa/shots.cjs      # اسکرین‌شات تمام‌صفحه از ۸ صف�
 | `http(s)://(www.)darband.coffee/*` | `https://ghahvino.ir/*` با حفظ مسیر | 301 |
 
 جزئیات کامل ممیزی سئو و ریسپانسیو در [`RESPONSIVE_SEO_AUDIT.md`](./RESPONSIVE_SEO_AUDIT.md).
+
+## ۱۰. PWA
+
+آیکن‌های رسمی از `public/brand/ghahvino-logomark.svg` ساخته می‌شوند. برای بازتولید دقیق،
+`node scripts/build-icons.cjs` و سپس `npm run build` را اجرا کنید. رنگ نشان `#2B1D17`
+و زمینه `#FBF8F4` است؛ مسیرهای SVG تغییر نمی‌کنند. فایل‌های اصلی Desktop و `public/ghahvino.png` دست‌نخورده‌اند.
+
+```bash
+npm ci
+npm run build
+npm start
+# ترمینال دیگر
+node qa/pwa-worker.cjs
+node qa/pwa.cjs
+```
+
+از `npm run build` استفاده کنید، نه `next build` مستقیم. Worker خروجی تولیدشده و در Git نادیده گرفته می‌شود.
+فایل‌های `public` و `.next` همان Build با هم منتشر شوند؛ در Docker نیز public را بعد از Build کپی کنید.
+CDN باید هدر no-store مربوط به `/sw.js` را حفظ کند. HTTPS الزامی است؛ localhost برای QA مجاز است.
+انتشار اتمیک باشد؛ فایل‌های hash‌شدهٔ قدیمی مدتی برای تب‌های باز در CDN باقی بمانند.
+
+در DevTools → Application، Manifest، Service Workers (scope `/`) و Cache Storage را بررسی کنید.
+صفحهٔ عمومی را آنلاین باز کنید، Offline کنید و Reload بزنید. مسیر ذخیره‌نشده باید fallback با status 503 بدهد.
+مسیرهای خصوصی عمداً از کش پاسخ نمی‌گیرند؛ خطای شبکه در درخواست کامل خصوصی آفلاین ممکن است.
+برای Update نسخهٔ دوم را منتشر کنید و `registration.update()` را اجرا کنید؛ پیش از کلیک کاربر Reload ممنوع است.
+`qa/pwa.cjs` همین مسیر را با پراکسی ایزوله و دو Worker واقعی آزمایش می‌کند.
+
+### پاک‌سازی کش Development
+
+ترجیحاً Development را روی پورت جدا اجرا کنید. برای حذف فقط Worker و کش‌های همین برنامه، در Console همان origin محلی:
+
+```js
+if (["localhost", "127.0.0.1"].includes(location.hostname)) {
+  for (const registration of await navigator.serviceWorker.getRegistrations()) {
+    const worker = registration.active || registration.waiting || registration.installing;
+    if (registration.scope === location.origin + "/" && worker?.scriptURL === location.origin + "/sw.js") {
+      await registration.unregister();
+    }
+  }
+  for (const name of await caches.keys()) {
+    if (name.startsWith("ghahvino-pwa-")) await caches.delete(name);
+  }
+  location.reload();
+}
+```
+
+کش حذف‌شده قابل‌بازیابی نیست؛ با بازدید آنلاین دوباره ساخته می‌شود. localStorage سبد و نشست یا کش برنامه‌های دیگر را حذف نکنید.
+در صورت استفاده از Chrome سیستم، `PLAYWRIGHT_EXECUTABLE_PATH` را تنظیم کنید.
+با `PWA_ARTIFACT_DIR` می‌توان Screenshotهای QA را خارج از Repository ذخیره کرد.
+نصب واقعی iPhone، Safe Area، lifecycle و احتمال حذف Storage نیاز به Manual QA روی دستگاه واقعی دارند.

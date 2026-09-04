@@ -17,7 +17,7 @@ const PAGES = [
 ];
 
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_EXECUTABLE_PATH });
   for (const vp of VIEWPORTS) {
     const ctx = await browser.newContext({
       viewport: { width: vp.width, height: vp.height },

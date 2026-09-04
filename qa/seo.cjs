@@ -34,7 +34,7 @@ const meta = (page, selector, attr = "content") =>
   page.locator(selector).first().getAttribute(attr).catch(() => null);
 
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_EXECUTABLE_PATH });
   const ctx = await browser.newContext({ locale: "fa-IR", viewport: { width: 1280, height: 900 } });
   const page = await ctx.newPage();
 

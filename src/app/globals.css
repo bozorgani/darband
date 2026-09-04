@@ -127,6 +127,12 @@
   }
 }
 
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .pwa-safe-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
+
 /* ==========================================================================
    Utilities
    ========================================================================== */

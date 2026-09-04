@@ -16,7 +16,7 @@ const shoot = async (p, file) => {
 };
 
 (async () => {
-  const b = await chromium.launch();
+  const b = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_EXECUTABLE_PATH });
   for (const [name, width, height] of [["desktop", 1280, 900], ["mobile", 390, 844]]) {
     /* Guest: auth + OTP */
     const guest = await b.newContext({ viewport: { width, height }, locale: "fa-IR", reducedMotion: "reduce" });

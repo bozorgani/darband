@@ -49,7 +49,7 @@ const rendersLtr = async (page, selector) =>
   }, selector);
 
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_EXECUTABLE_PATH });
 
   /* =========================== Desktop context =========================== */
   const ctx = await browser.newContext({

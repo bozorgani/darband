@@ -18,6 +18,8 @@ const siteUrl = siteConfig.url;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  applicationName: brand.name,
+  manifest: "/manifest.webmanifest",
   title: {
     default: `خرید قهوه تازه‌رست و تخصصی | ${brand.name}`,
     template: `%s | ${brand.name}`,
@@ -56,13 +58,24 @@ export const metadata: Metadata = {
     images: [siteConfig.ogImage],
   },
   robots: { index: true, follow: true },
+  icons: {
+    icon: [
+      { url: "/icons/icon-192.png", type: "image/png", sizes: "192x192" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" }],
+  },
+  appleWebApp: {
+    capable: true,
+    title: brand.name,
+    statusBarStyle: "default",
+  },
 };
 
 export const viewport: Viewport = {
   themeColor: "#22150e",
   width: "device-width",
   initialScale: 1,
-  viewportFit: "cover",
+  viewportFit: "auto",
 };
 
 /**

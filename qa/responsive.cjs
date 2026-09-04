@@ -7,7 +7,7 @@ const { chromium } = require("playwright");
 
 const BASE = "http://localhost:3000";
 const WIDTHS = [320, 360, 375, 390, 412, 768, 1024, 1280, 1440];
-const PAGES = ["/", "/shop", "/product/ethiopia-yirgacheffe", "/journal", "/about", "/auth", "/account"];
+const PAGES = ["/", "/shop", "/product/ethiopia-yirgacheffe", "/journal", "/about", "/auth", "/account", "/offline"];
 
 const SESSION = {
   id: "u-001",
@@ -26,7 +26,7 @@ const SESSION = {
 const problems = [];
 
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_EXECUTABLE_PATH });
 
   for (const width of WIDTHS) {
     const ctx = await browser.newContext({

@@ -1,6 +1,6 @@
 const { chromium } = require("playwright");
 (async () => {
-  const b = await chromium.launch();
+  const b = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_EXECUTABLE_PATH });
   for (const path of ["/", "/shop", "/product/ethiopia-yirgacheffe", "/cart", "/journal"]) {
     const p = await b.newPage();
     const msgs = [];

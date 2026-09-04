@@ -15,7 +15,7 @@ const eslintConfig = defineConfig([
   ]),
   {
     /* QA scripts are standalone CommonJS Playwright runners, not app code. */
-    files: ["qa/**/*.cjs"],
+    files: ["qa/**/*.cjs", "scripts/**/*.cjs"],
     rules: {
       "@typescript-eslint/no-require-imports": "off",
     },

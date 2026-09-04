@@ -10,6 +10,7 @@ import { Footer } from "@/components/layout/Footer";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { SearchOverlay } from "@/components/search/SearchOverlay";
+import { PwaExperience } from "@/components/pwa/PwaExperience";
 import { cn } from "@/lib/utils";
 
 /**
@@ -27,6 +28,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <MobileNav />
           <CartDrawer />
           <SearchOverlay />
+          <PwaExperience />
         </StoreProvider>
       </AuthProvider>
     </ToastProvider>

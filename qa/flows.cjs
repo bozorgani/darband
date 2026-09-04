@@ -5,7 +5,7 @@ const check = (name, ok, extra = "") =>
   results.push(`${ok ? "PASS" : "FAIL"}  ${name}${extra ? " :: " + extra : ""}`);
 
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({ executablePath: process.env.PLAYWRIGHT_EXECUTABLE_PATH });
 
   /* ---------------- Desktop flow ---------------- */
   const ctx = await browser.newContext({

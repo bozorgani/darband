@@ -1,7 +1,7 @@
 const { chromium } = require("playwright");
 const VP=[[375,812],[390,844],[768,1024],[1024,768],[1280,900],[1440,960]];
 const PAGES=["/","/shop","/product/ethiopia-yirgacheffe","/product/manual-grinder-pro","/cart","/wishlist","/about","/journal","/journal/art-of-pourover","/faq","/contact","/nope-404"];
-(async()=>{const b=await chromium.launch();const out=[];
+(async()=>{const b=await chromium.launch({ executablePath: process.env.PLAYWRIGHT_EXECUTABLE_PATH });const out=[];
 for(const [w,h] of VP){const c=await b.newContext({viewport:{width:w,height:h},locale:"fa-IR",reducedMotion:"reduce"});
 for(const path of PAGES){const p=await c.newPage();const errs=[];
 p.on("pageerror",e=>errs.push("pageerror "+e.message));
