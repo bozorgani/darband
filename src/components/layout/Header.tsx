@@ -116,7 +116,10 @@ export function Header() {
                  wordmark half-way off the header. */
               className="absolute start-1/2 max-lg:-translate-x-1/2 max-lg:rtl:translate-x-1/2 lg:static lg:order-first lg:start-auto"
             >
-              <Logo className={cn("transition-all duration-400", scrolled ? "h-7" : "h-8 lg:h-9")} />
+              <Logo
+                markTone={overHero ? "gold" : "inherit"}
+                className={cn("transition-all duration-400", scrolled ? "h-7" : "h-8 lg:h-9")}
+              />
             </Link>
 
             {/* Actions */}

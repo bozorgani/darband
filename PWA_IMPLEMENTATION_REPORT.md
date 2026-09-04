@@ -5,7 +5,7 @@ Remote was checked and already up to date. No push has been performed.
 
 ## Release decision
 
-**Brand decision resolved: original brown SVG on #FBF8F4 approved by the owner.** The rejected redesigned icons have been replaced by deterministic rasterizations of the supplied SVG. Earlier engineering gates and 30 Lighthouse runs passed; those measurements predate this asset-only replacement. Updated icon/build checks are recorded below. Device/deployment acceptance remains outstanding; no push/deployment has been performed.
+**Brand decision resolved: official SVG geometry with the owner-provided gold/espresso reference theme.** The rejected redesigned icons have been replaced by deterministic rasterizations of the supplied SVG. The reference image was sampled at gold `#E59141` and espresso `#1E1009`; no logo geometry was regenerated. Earlier engineering gates and 30 Lighthouse runs passed; those measurements predate this asset-only replacement. Updated icon/build checks are recorded below. Device/deployment acceptance remains outstanding; no push/deployment has been performed.
 
 ## Architecture and files
 
@@ -44,8 +44,8 @@ The existing development-only Playwright dependency was upgraded from 1.49.1 to 
 | display | standalone |
 | display_override | window-controls-overlay, standalone, minimal-ui |
 | orientation | portrait-primary |
-| background_color | #fbf8f4, existing offwhite design token |
-| theme_color | #22150e, existing espresso-900 design token |
+| background_color | #1e1009, sampled espresso background of the approved reference |
+| theme_color | #1e1009, matched browser/app chrome |
 | categories | shopping, food, lifestyle |
 | shortcuts | /shop, /cart, /wishlist, /journal |
 
@@ -56,7 +56,7 @@ Shortcut availability does not imply offline access to private cart/wishlist. Ap
 Original `public/ghahvino.png` remains untracked and byte-preserved: PNG, 1536×1024, alpha channel, 3:2 composition with G, wordmark/tagline and glow. It is a complete lockup, not a ready square installation icon.
 SHA-256: `8E1B13EC5FC128C401CFE598DEDA3905F5BDCF1D59E0A75ECE6D658F08F6A989`.
 
-The owner rejected the earlier generated redesign and supplied `C:\Users\bozor\Desktop\ghahvino.svg`. Its SVG content is preserved in `public/brand/ghahvino-logomark.svg` (verified identical after line-ending normalization). Both paths, the transform, viewBox and #2B1D17 fill remain unchanged. `scripts/build-icons.cjs` rasterizes this exact vector onto the explicitly approved #FBF8F4 background using uniform scaling/padding only. No AI generation, tracing, cropping, recoloring or glyph alteration is used. Desktop originals and the earlier `public/ghahvino.png` source remain untouched.
+The owner rejected the earlier generated redesign and supplied `C:\Users\bozor\Desktop\ghahvino.svg`. Its source content is preserved in `public/brand/ghahvino-logomark.svg` (verified identical after line-ending normalization). Both paths, transform and viewBox remain unchanged. `scripts/build-icons.cjs` recolors that exact geometry in memory to sampled gold `#E59141`, then rasterizes it on opaque sampled espresso `#1E1009` with uniform scaling/padding only. No AI generation, tracing, cropping or glyph alteration is used. The shared site `Logo` now uses the same official paths; its mark is gold over the dark homepage hero and inherits the appropriate foreground color on light surfaces. Desktop originals and the earlier `public/ghahvino.png` source remain untouched.
 
 | Asset | Dimensions | Format / purpose |
 |---|---|---|
@@ -67,9 +67,9 @@ The owner rejected the earlier generated redesign and supplied `C:\Users\bozor\D
 | public/apple-touch-icon.png | 180×180 | PNG, Apple home-screen icon |
 | src/app/favicon.ico | 16/32/48/256 | ICO with RGBA PNG frames of the same mark |
 
-Maskable artwork is opaque. Pixel checks measured mark radius 29.10%/29.28% of image width for 192/512, safely inside the 40% radius circle. Normal PNG icons are 5,011/16,690 bytes; maskable PNGs are 4,241/14,357 bytes; Apple icon is 4,521 bytes. The renderer asserts dimensions, background RGB, opacity, visible artwork and maskable safe-zone bounds. Build successfully decodes the multiresolution favicon. Reproduce with `node scripts/build-icons.cjs`, then `npm run build` so worker version changes with the assets.
+Maskable artwork is opaque. Pixel checks measured mark radius 29.10%/29.14% of image width for 192/512, safely inside the 40% radius circle. Normal PNG icons are 4,885/16,090 bytes; maskable PNGs are 4,190/13,925 bytes; Apple icon is 4,386 bytes. The renderer asserts dimensions, background RGB, opacity, visible artwork and maskable safe-zone bounds. Build successfully decodes the multiresolution favicon. Reproduce with `node scripts/build-icons.cjs`, then `npm run build` so worker version changes with the assets.
 
-Post-replacement verification: original SVG content matches the Desktop source after line-ending normalization; original legacy PNG hash is unchanged; lint and production build pass; `qa/pwa.cjs` passes all 70 checks with the new assets; ICO contains 16/32/48/256 frames; `git diff --check` passes. Current generated worker version: `9b561f921c7cdfde`. The 30-run performance table below is historical to the preceding build, not a rerun after the smaller icon replacement.
+Post-replacement verification: original SVG content matches the Desktop source after line-ending normalization; original legacy PNG remains untouched; production build and `qa/pwa-worker.cjs` pass; `qa/pwa.cjs` passes all 70 checks with the new assets; ICO contains 16/32/48/256 frames; `git diff --check` passes. Current generated worker version: `3b1b8d4f07e6b6c0`. Header renders were inspected at 390px and 1440px. The general responsive runner only reported blocked Google Analytics network requests in this restricted test environment, not layout overflow. The 30-run performance table below is historical to the preceding build, not a rerun after this visual replacement.
 
 ## Cache matrix and limits
 
@@ -176,7 +176,7 @@ Future push requires a backend subscription store, VAPID/secrets, explicit conte
 
 ## Remaining release checks
 
-1. Official icon fidelity/approval is resolved: supplied SVG and brown-on-light treatment are now used.
+1. Official icon fidelity/approval is resolved: supplied SVG geometry and the approved gold-on-espresso treatment are now used.
 2. Real iPhone installation, safe-area and lifecycle; Android/desktop installed-window smoke test (including OS titlebar layout in window-controls-overlay); production HTTPS/CDN headers after deployment.
 3. Commit only after required gates and asset approval; never push without permission.
 

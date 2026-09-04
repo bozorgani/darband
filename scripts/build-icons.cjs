@@ -1,24 +1,27 @@
-/* Exact SVG rasterization: no redrawing, recoloring, cropping or distortion. */
+/* Exact official SVG geometry, recolored to the approved gold/espresso app-icon theme. */
 const fs = require("node:fs");
 const path = require("node:path");
 const assert = require("node:assert/strict");
 const sharp = require("sharp"); // Supplied by the existing Next installation.
 const root = path.resolve(__dirname, "..");
-const source = fs.readFileSync(path.join(root, "public/brand/ghahvino-logomark.svg"));
+const source = fs.readFileSync(path.join(root, "public/brand/ghahvino-logomark.svg"), "utf8");
+const background = "#1E1009";
+const gold = "#E59141";
+const themedSource = Buffer.from(source.replace('fill="#2B1D17"', `fill="${gold}"`));
 async function render(size, scale) {
   const inner = Math.round(size * scale);
-  const mark = await sharp(source).resize(inner, inner, { fit: "contain" }).png().toBuffer();
-  return sharp({ create: { width: size, height: size, channels: 3, background: "#FBF8F4" } })
+  const mark = await sharp(themedSource).resize(inner, inner, { fit: "contain" }).png().toBuffer();
+  return sharp({ create: { width: size, height: size, channels: 3, background } })
     .composite([{ input: mark, gravity: "centre" }]).removeAlpha().png().toBuffer();
 }
 async function verify(buffer, size, maskable) {
   const { data, info } = await sharp(buffer).raw().toBuffer({ resolveWithObject: true });
   assert.equal(info.width, size); assert.equal(info.height, size); assert.equal(info.channels, 3);
-  assert.deepEqual([...data.subarray(0, 3)], [251, 248, 244]);
+  assert.deepEqual([...data.subarray(0, 3)], [30, 16, 9]);
   let radius = 0, pixels = 0;
   for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
     const i = (y * size + x) * 3;
-    if (data[i] < 245 || data[i + 1] < 242 || data[i + 2] < 238) {
+    if (data[i] > 100 && data[i + 1] > 50 && data[i] > data[i + 1] * 1.25) {
       radius = Math.max(radius, Math.hypot(x + .5 - size / 2, y + .5 - size / 2)); pixels++;
     }
   }
